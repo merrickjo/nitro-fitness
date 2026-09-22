@@ -41,6 +41,18 @@ The interface is designed to be read on a reflective e-ink panel first and a bac
 
 Dark mode inverts to pure white-on-black and follows the system setting.
 
+## Install it
+
+NITRO is a PWA — it installs to the home screen and runs with no network, which is the point on an e-ink phone in a gym.
+
+**Brave / Chrome on Android:** open the Pages URL → menu (⋮) → **Install app** (or *Add to Home screen*). It installs as a real WebAPK: own launcher icon, own task in the app switcher, no browser chrome.
+
+**Safari on iOS:** Share → Add to Home Screen.
+
+**Desktop Chrome / Brave / Edge:** install icon in the address bar.
+
+After the first load the service worker precaches the app shell and the IBM Plex fonts, so every launch after that works offline. Updates land on the next launch after a push — the page is served from cache and refreshed behind you.
+
 ## Session shape
 
 ```
@@ -54,7 +66,16 @@ Each session gets a four-character code (e.g. `SESSION K4WP`) so you can note in
 
 ## Tech
 
-Vanilla HTML, CSS, and JavaScript in a single `index.html`. No build step, no framework, no backend. `localStorage` remembers your kit and rounds choice only, wrapped in try/catch so it degrades silently in private windows.
+Vanilla HTML, CSS, and JavaScript. No build step, no framework, no backend. `localStorage` remembers your kit and rounds choice only, wrapped in try/catch so it degrades silently in private windows.
+
+```
+index.html              the whole app — markup, styles, movement library, logic
+manifest.webmanifest    PWA metadata (name, icons, standalone display)
+sw.js                   service worker: precached shell, offline-first
+icons/                  192 / 512 / maskable-512 / apple-touch / favicon
+```
+
+Icons are generated geometrically (no font dependency) — see the commit that added them if you want to regenerate at other sizes.
 
 ## Run it
 

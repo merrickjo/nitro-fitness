@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="NITRO — randomized badminton-specific strength circuits for TRX + kettlebell or pure bodyweight, designed for e-ink screens.">
 <meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NITRO">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
 <style>
 html{color-scheme:light dark}
 body{margin:0;font-size:16px}
@@ -522,6 +529,18 @@ load();
 rollAll();
 syncControls();
 render();
+</script>
+<script>
+/* Registered only over http(s): opening index.html straight off the disk
+   (file://) has no origin a service worker can attach to, and the app
+   works fine there without one. */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function () {
+      /* no offline cache this visit — the app still runs */
+    });
+  });
+}
 </script>
 </body>
 </html>
