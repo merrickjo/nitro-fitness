@@ -1,63 +1,85 @@
-# Novaxa — Personalized Exercise Sets
+# NITRO — Badminton Strength
 
-[![Made with HTML](https://img.shields.io/badge/built%20with-HTML%2FCSS%2FJS-5eead4?style=flat-square)](https://github.com/merrickjo/novaxa-fitness)
-[![No build step](https://img.shields.io/badge/build-none%20required-60a5fa?style=flat-square)](#getting-started)
-[![License](https://img.shields.io/badge/license-unlicensed-lightgrey?style=flat-square)](#license)
+A single-page generator for badminton-specific strength circuits. Pick your kit, pick your rounds, hit reroll. It gives you a warm-up and three supersets, with reps only — no timers, no clocks, nothing that needs a screen refresh mid-set.
 
-Novaxa is a single-page web app that generates a personalized workout on the spot. Tell it how recovered you feel, what equipment you have, and how much time you've got — it builds a warm-up, main set, and cool-down, then runs you through it with a live timer.
-
-**[Open the live app →](https://merrickjo.github.io/novaxa-fitness/)** *(enable GitHub Pages on this repo to activate this link — see [Getting Started](#getting-started))*
+**[Open the app →](https://merrickjo.github.io/nitro-fitness/)** *(update this link after renaming the repo and enabling GitHub Pages)*
 
 ---
 
-## Features
+## What it is
 
-- **Recovery-aware programming** — a 0–100% recovery slider maps to a work/rest ratio and an allowed intensity range (tiers 1–3), so a rough day yields an easier session automatically.
-- **Equipment-driven exercise pool** — select any combination of body weight, pull-up bar, kettlebell, dumbbell, incline treadmill, full treadmill, TRX, or skipping rope. Kettlebell and dumbbell entries take a load (kg) that scales rep ranges and filters out tier-3 moves once the load gets heavy.
-- **Focus targeting** — Recommended (balanced), Core, Legs, or Upper.
-- **Smart session builder** — guarantees at least one exercise per piece of equipment you checked, caps body-weight moves at ~50% of the set when other gear is selected, and rotates across muscle groups.
-- **48-hour recovery memory** — session history is kept in `localStorage` so the generator avoids re-hammering a muscle group trained at moderate/high intensity in the last two days (and avoids exact repeats too).
-- **Guided session player** — phase-by-phase timer (warm-up → work → rest → cool-down) with pause, skip, and restart, a running progress bar, an "up next" preview, and a full plan list.
-- **20 or 30-minute sessions** — both include a built-in 2–3 minute warm-up and cool-down.
+Every movement in the library earns its place by feeding one of six badminton demands. The session skeleton is fixed so a random draw is never lopsided:
 
-## How it works
+| Slot | Demand | Why it's in a badminton session |
+|------|--------|---------------------------------|
+| **A1** | Knee-dominant / deceleration | The lunge to the net and the push back to base |
+| **A2** | Horizontal pull | Mid-back and rear delt — the brake on every overhead swing |
+| **B1** | Hip hinge power | Triple extension for the jump smash and explosive push-off |
+| **B2** | Scapula + rotator cuff | Keeps the racket shoulder healthy under repeated overhead load |
+| **C1** | Lateral / change of direction | Side-to-side court coverage and the ability to stop |
+| **C2** | Rotation / anti-rotation | Transfers hip power into the racket head without leaking it |
 
-1. **Setup screen** — pick recovery %, focus, equipment (+ load for weighted gear), and total time.
-2. **Generation** — `generateWorkout()` filters the exercise library by equipment and recovery-allowed tiers, applies the heavy-load safety rule, then builds the main set in passes: equipment coverage → muscle-group rotation (respecting recency and the body-weight cap) → relaxed fallback passes so the set is never short.
-3. **Session player** — the plan (warm-up block, main exercises with per-exercise work/rest, cool-down block) runs as a sequential timer.
-4. **History** — on completion, the main exercises are logged to `localStorage` (`novaxa_history`, 14-day retention) to inform the next session's muscle-recovery check.
+Reroll redraws all six slots, all three warm-up movements, and the rep counts. Each block also has its own swap button if only one pair needs changing.
 
-## Tech stack
+## Kit modes
 
-Vanilla HTML, CSS, and JavaScript in a single `index.html` file. No framework, no build tooling, no backend — the exercise library, session logic, and UI all live client-side, with `localStorage` as the only persistence layer.
+- **TRX + kettlebell** — the full library, nothing that needs a rack, bench, or barbell.
+- **Bodyweight** — every slot has real bodyweight entries, including honest horizontal-pull options (inverted row under a table, towel row on a door handle, prone swimmer pulls) rather than pretending the pull slot can be skipped.
 
-## Getting started
+The two pools never mix. Switching kit redraws the whole session.
 
-No installation or build step required.
+## Built for e-ink
 
-**Run locally**
-```bash
-git clone https://github.com/merrickjo/novaxa-fitness.git
-cd novaxa-fitness
-open index.html   # or just double-click it
+The interface is designed to be read on a reflective e-ink panel first and a backlit screen second:
+
+- Only pure black, pure white, and two grays that land on clean grayscale steps — no gradients, no shadows, no translucency.
+- All transitions and animations are disabled globally. Every animated pixel on e-ink is a panel refresh and a ghosting artifact.
+- Heavy condensed display type and monospaced numerals, sized for reading at arm's length.
+- State is shown by full inversion (black fill, white text) rather than by color or subtle tint.
+- 48px minimum touch targets; nothing depends on hover.
+- Prints cleanly — controls drop out, the session stays.
+
+Dark mode inverts to pure white-on-black and follows the system setting.
+
+## Session shape
+
+```
+Warm-up  ·  3 movements, one pass
+Working  ·  N rounds of  A1→A2  B1→B2  C1→C2
 ```
 
-**Host it for free (GitHub Pages)**
-1. Repo → Settings → Pages
-2. Source: `Deploy from a branch` → Branch: `main` / `root`
-3. Save — the app will be live at `https://merrickjo.github.io/novaxa-fitness/` within a minute or two.
+Rounds toggle between 2, 3, and 4. Rest is deliberately unprescribed — take what you need between pairs.
 
-## Roadmap ideas
+Each session gets a four-character code (e.g. `SESSION K4WP`) so you can note in a log which draw you actually did.
 
-- [ ] Export/share a generated session
-- [ ] Editable exercise library (add custom moves/equipment)
-- [ ] Progress dashboard over the stored session history
-- [ ] PWA support for offline use on a phone at the gym
+## Tech
 
-## Contributing
+Vanilla HTML, CSS, and JavaScript in a single `index.html`. No build step, no framework, no backend. `localStorage` remembers your kit and rounds choice only, wrapped in try/catch so it degrades silently in private windows.
 
-This is currently a single-owner project. Issues and pull requests are welcome — please open an issue first for anything beyond a small fix.
+## Run it
+
+```bash
+git clone https://github.com/merrickjo/nitro-fitness.git
+cd nitro-fitness
+open index.html
+```
+
+Or serve it on GitHub Pages: Settings → Pages → Deploy from a branch → `main` / root.
+
+## Adding movements
+
+Edit the `POOL` and `WARMUP` objects near the top of the script block. Each entry:
+
+```js
+{ n:'KB lateral lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE,
+  c:'Side-to-side coverage and the push back to base, loaded.' }
+```
+
+- `kit` — `'trxkb'`, `'bw'`, or `'both'`
+- `r` — candidate rep values; the draw picks one
+- `u` — a unit from the `U` map
+- `c` — one line on what it does for badminton. If you can't write that line, the movement doesn't belong in the pool.
 
 ## License
 
-No license has been added yet, which by default reserves all rights to the author. Add a `LICENSE` file (e.g. MIT) if you want to allow reuse.
+No license file yet, which reserves all rights to the author. Add one if you want this reusable.

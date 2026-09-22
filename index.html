@@ -1,857 +1,503 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Novaxa — Personalized Exercise Sets</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="NITRO — randomized badminton-specific strength circuits for TRX + kettlebell or pure bodyweight, designed for e-ink screens.">
+<meta name="theme-color" content="#ffffff">
 <style>
-  :root{
-    /* Narrowkind Design System tokens */
-    --field-base:#1E2320;
-    --field-raised:#2B3129;
-    --field-cover:#B35A2E;
-    --card-cream:#F5F1E8;
-    --accent-gold:#E3A15C;
-    --border-hairline-on-dark: rgba(245,241,232,0.25);
-    --border-hairline-on-dark-soft: rgba(245,241,232,0.15);
-    --text-dim: rgba(245,241,232,0.6);
-    --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --radius:0px;
-    --radius-tag:2px;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--field-base);
-    color:var(--card-cream);
-    font-family:var(--font-sans);
-    min-height:100vh;
-  }
-  .wrap{max-width:640px;margin:0 auto;padding:48px 24px 96px;}
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;border-bottom:1px solid var(--border-hairline-on-dark);padding-bottom:24px;}
-  header h1{font-size:24px;font-weight:800;margin:0;letter-spacing:-0.01em;}
-  header .badge{font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--field-base);background:var(--accent-gold);padding:4px 10px;border-radius:var(--radius-tag);}
-  .card{background:var(--field-raised);border:1px solid var(--border-hairline-on-dark-soft);border-radius:var(--radius);padding:24px;margin-bottom:16px;}
-  .card h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-gold);margin:0 0 16px;}
-  label.field{display:block;margin-bottom:16px;}
-  label.field:last-child{margin-bottom:0;}
-  .rowlabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
-  .rowlabel span.name{font-size:14px;font-weight:700;}
-  .rowlabel span.val{font-size:14px;color:var(--accent-gold);font-weight:700;}
-  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;background:transparent;height:4px;margin:8px 0;}
-  input[type=range]::-webkit-slider-runnable-track{height:4px;background:rgba(245,241,232,0.2);border-radius:0;}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--accent-gold);border-radius:50%;margin-top:-6px;cursor:pointer;}
-  input[type=range]::-moz-range-track{height:4px;background:rgba(245,241,232,0.2);}
-  input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--accent-gold);border:none;border-radius:50%;cursor:pointer;}
-  .recovery-scale{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim);margin-top:6px;}
-  .seg{display:flex;gap:8px;flex-wrap:wrap;}
-  .seg button{
-    flex:1 1 auto;min-width:90px;
-    background:transparent;border:1px solid var(--border-hairline-on-dark);color:var(--card-cream);
-    padding:10px 12px;border-radius:var(--radius);font-size:13px;font-weight:700;font-family:var(--font-sans);cursor:pointer;
-  }
-  .seg button.active{border-color:var(--accent-gold);color:var(--accent-gold);}
-  .equip-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  @media (max-width:520px){.equip-grid{grid-template-columns:1fr;}}
-  .equip-item{
-    background:transparent;border:1px solid var(--border-hairline-on-dark);border-radius:var(--radius);padding:10px 12px;
-    display:flex;flex-direction:column;gap:8px;
-  }
-  .equip-item .top{display:flex;align-items:center;gap:10px;}
-  .equip-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent-gold);}
-  .equip-item .label{font-size:13.5px;font-weight:700;}
-  .equip-item .kg-row{display:flex;align-items:center;gap:8px;margin-top:2px;}
-  .equip-item .kg-row input{
-    width:70px;background:var(--field-base);border:1px solid var(--border-hairline-on-dark);color:var(--card-cream);
-    border-radius:var(--radius);padding:6px 8px;font-size:13px;font-family:var(--font-sans);
-  }
-  .equip-item .kg-row span{font-size:11.5px;color:var(--text-dim);}
-  .btn-primary{
-    width:100%;padding:16px;border:1px solid var(--accent-gold);border-radius:var(--radius);font-size:15px;font-weight:800;
-    background:var(--accent-gold);color:var(--field-base);cursor:pointer;font-family:var(--font-sans);letter-spacing:.01em;
-  }
-  .btn-primary:disabled{opacity:.4;cursor:not-allowed;}
-  .hint{font-size:12px;color:var(--text-dim);margin-top:10px;line-height:1.5;}
-  .error{color:var(--field-cover);font-size:12.5px;font-weight:700;margin-top:12px;display:none;}
+html{color-scheme:light dark}
+body{margin:0;font-size:16px}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>NITRO Fitness</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+/* ──────────────────────────────────────────────────────────────
+   NITRO — badminton strength circuit generator
+   Palette is built for reflective e-ink: only tones that land on
+   a clean grayscale step. No gradients, no shadows, no animation
+   (every transition costs a panel refresh and leaves ghosting).
+   ────────────────────────────────────────────────────────────── */
+:root{
+  --paper:#FFFFFF;
+  --ink:#000000;
+  --ink-soft:#2B2B2B;
+  --fill:#DBDBDB;
+  --fill-soft:#F2F2F2;
+  --rule:#000000;
+  --on-ink:#FFFFFF;
+  --hair:#000000;
 
-  /* Timer / session screen */
-  #sessionScreen{display:none;}
-  .session-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-  .back-link{font-size:13px;font-weight:700;color:var(--card-cream);text-decoration:underline;text-underline-offset:4px;cursor:pointer;background:none;border:none;padding:0;font-family:var(--font-sans);}
-  .overall-bar{height:4px;background:rgba(245,241,232,0.15);border-radius:0;overflow:hidden;margin-bottom:28px;}
-  .overall-bar > div{height:100%;background:var(--accent-gold);width:0%;transition:width .3s linear;}
-  .phase-pill{
-    display:inline-block;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-    margin-bottom:16px;
+  --f-display:"IBM Plex Sans Condensed","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#000000;
+    --ink:#FFFFFF;
+    --ink-soft:#DCDCDC;
+    --fill:#303030;
+    --fill-soft:#141414;
+    --rule:#FFFFFF;
+    --on-ink:#000000;
+    --hair:#FFFFFF;
   }
-  .phase-pill.warmup{color:var(--field-cover);}
-  .phase-pill.work{color:var(--accent-gold);}
-  .phase-pill.rest{color:var(--text-dim);}
-  .phase-pill.cooldown{color:var(--field-cover);}
-  .exercise-name{font-size:32px;font-weight:800;margin:0 0 8px;line-height:1.05;}
-  .exercise-cue{font-size:14.5px;color:var(--text-dim);margin:0 0 28px;min-height:20px;}
-  .timer-circle-wrap{display:flex;justify-content:center;margin:10px 0 28px;}
-  .timer-num{font-size:64px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-1px;}
-  .up-next{font-size:12.5px;color:var(--text-dim);text-align:center;margin-bottom:28px;}
-  .up-next b{color:var(--card-cream);font-weight:700;}
-  .controls{display:flex;gap:10px;margin-bottom:28px;}
-  .controls button{
-    flex:1;padding:13px;border-radius:var(--radius);border:1px solid var(--border-hairline-on-dark);background:transparent;
-    color:var(--card-cream);font-size:14px;font-weight:700;font-family:var(--font-sans);cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:6px;
-  }
-  .controls button .material-symbols-outlined{font-size:18px;}
-  .controls button.primary{background:var(--accent-gold);color:var(--field-base);border-color:var(--accent-gold);font-weight:800;}
-  .plan-list{max-height:260px;overflow-y:auto;border-top:1px solid var(--border-hairline-on-dark-soft);}
-  .plan-row{
-    display:flex;justify-content:space-between;align-items:center;padding:10px 4px;
-    border-bottom:1px solid var(--border-hairline-on-dark-soft);font-size:13px;color:var(--text-dim);
-  }
-  .plan-row.current{color:var(--card-cream);font-weight:800;}
-  .plan-row .tag{font-size:10.5px;padding:3px 8px;border-radius:var(--radius-tag);background:rgba(245,241,232,0.1);color:var(--text-dim);margin-left:8px;font-weight:700;}
-  .plan-row.current .tag{background:var(--accent-gold);color:var(--field-base);}
-  .tier-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;}
-  #doneScreen{display:none;text-align:center;padding:64px 0;}
-  #doneScreen h2{font-size:32px;font-weight:800;margin:0 0 12px;}
-  #doneScreen p{color:var(--text-dim);font-size:14px;margin:0 0 32px;}
+}
+:root[data-theme="dark"]{
+  --paper:#000000;
+  --ink:#FFFFFF;
+  --ink-soft:#DCDCDC;
+  --fill:#303030;
+  --fill-soft:#141414;
+  --rule:#FFFFFF;
+  --on-ink:#000000;
+  --hair:#FFFFFF;
+}
+
+*,*::before,*::after{box-sizing:border-box;transition:none!important;animation:none!important}
+html,body{margin:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:16px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:660px;margin:0 auto;padding-block:20px 56px;padding-left:18px;padding-right:18px}
+
+/* ── masthead ─────────────────────────────────────────────── */
+.mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  border-bottom:3px solid var(--rule);padding-bottom:10px}
+.mark{font-family:var(--f-display);font-weight:700;font-size:44px;line-height:.9;letter-spacing:-.02em;margin:0}
+.mark .dot{font-family:var(--f-data);font-size:18px;vertical-align:super;font-weight:700}
+.tag{font-family:var(--f-data);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  padding-bottom:4px}
+.sub{font-family:var(--f-data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:7px 0;
+  border-bottom:1px solid var(--hair)}
+
+/* ── controls ─────────────────────────────────────────────── */
+.controls{display:flex;flex-direction:column;gap:14px;padding:18px 0;border-bottom:3px solid var(--rule)}
+.ctl-label{font-family:var(--f-data);font-size:11px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;margin-bottom:7px;display:block}
+.seg{display:flex;gap:0;border:2px solid var(--rule)}
+.seg button{
+  flex:1 1 0;min-height:48px;padding:10px 8px;cursor:pointer;
+  background:var(--paper);color:var(--ink);border:0;border-right:2px solid var(--rule);
+  font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--on-ink)}
+.seg button:focus-visible{outline:3px solid var(--ink);outline-offset:-8px}
+
+.reroll{
+  width:100%;min-height:62px;cursor:pointer;
+  background:var(--ink);color:var(--on-ink);border:2px solid var(--rule);
+  font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:.08em;text-transform:uppercase;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+}
+.reroll:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.reroll .glyph{font-family:var(--f-data);font-size:20px;font-weight:700}
+
+/* ── section headings ─────────────────────────────────────── */
+.sec{margin-top:26px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  border-bottom:2px solid var(--rule);padding-bottom:5px;margin-bottom:0}
+.sec-title{font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:.06em;
+  text-transform:uppercase;margin:0}
+.sec-note{font-family:var(--f-data);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+
+/* ── movement rows ────────────────────────────────────────── */
+.rows{list-style:none;margin:0;padding:0}
+.row{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:start;
+  padding:13px 0;border-bottom:1px solid var(--hair)}
+.rows .row:last-child{border-bottom:0}
+.slot{
+  font-family:var(--f-data);font-weight:700;font-size:12px;
+  background:var(--ink);color:var(--on-ink);
+  width:34px;height:26px;display:flex;align-items:center;justify-content:center;
+  letter-spacing:.02em;
+}
+.slot.plain{background:var(--fill);color:var(--ink)}
+.name{display:block;font-family:var(--f-display);font-weight:600;font-size:19px;line-height:1.18;
+  margin:0 0 3px;letter-spacing:.005em}
+.cue{display:block;font-size:13.5px;line-height:1.4;color:var(--ink-soft);margin:0;max-width:44ch}
+.dose{text-align:right;white-space:nowrap;padding-left:4px}
+.dose .n{font-family:var(--f-data);font-weight:700;font-size:26px;line-height:1;
+  font-variant-numeric:tabular-nums;display:block}
+.dose .u{font-family:var(--f-data);font-size:10.5px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;display:block;margin-top:3px}
+
+/* superset grouping: a block is one bordered unit, its pair joined by a spine */
+.block{border:2px solid var(--rule);margin-top:14px}
+.block-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--ink);color:var(--on-ink);padding:7px 12px}
+.block-bar .lt{font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.14em;
+  text-transform:uppercase}
+.block-bar .rt{font-family:var(--f-data);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+.block .rows{padding:0 12px}
+.swap{
+  background:var(--paper);color:var(--ink);border:1px solid var(--hair);
+  font-family:var(--f-data);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  min-height:44px;padding:0 12px;cursor:pointer;width:100%;
+  border-top:1px solid var(--hair);border-left:0;border-right:0;border-bottom:0;
+}
+.swap:focus-visible{outline:3px solid var(--ink);outline-offset:-4px}
+
+/* ── warm-up sits flatter than the working blocks ─────────── */
+.warm{border:1px solid var(--hair);border-top:0;padding:0 12px}
+.warm .row{grid-template-columns:34px 1fr auto}
+
+/* ── footer ───────────────────────────────────────────────── */
+.foot{margin-top:30px;padding-top:14px;border-top:3px solid var(--rule);
+  font-family:var(--f-data);font-size:11px;letter-spacing:.06em;line-height:1.7;text-transform:uppercase}
+.foot p{margin:0 0 4px}
+
+@media (max-width:420px){
+  .mark{font-size:36px}
+  .name{font-size:17.5px}
+  .dose .n{font-size:23px}
+  .row{grid-template-columns:30px 1fr auto;gap:8px}
+  .slot{width:30px}
+}
+@media print{
+  .controls,.swap{display:none}
+  body{font-size:12pt}
+  .wrap{max-width:none}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header>
-    <h1>Novaxa</h1>
-    <span class="badge">Personalized Exercise Sets · build 2026-07-07.3</span>
+  <header class="mast">
+    <h1 class="mark">NITRO<span class="dot">◆</span></h1>
+    <div class="tag">Badminton strength</div>
   </header>
 
-  <!-- SETUP SCREEN -->
-  <div id="setupScreen">
+  <div class="sub">
+    <span id="sessionCode">SESSION —</span>
+    <span id="sessionShape">— ROUNDS · 3 SUPERSETS</span>
+  </div>
 
-    <div class="card">
-      <h2>Strain Target / Recovery Score</h2>
-      <label class="field">
-        <div class="rowlabel">
-          <span class="name">Recovery</span>
-          <span class="val" id="recoveryVal">65%</span>
-        </div>
-        <input type="range" id="recoverySlider" min="0" max="100" step="1" value="65">
-        <div class="recovery-scale"><span>0% — low, go easy</span><span>100% — fully recovered, go hard</span></div>
-      </label>
-    </div>
-
-    <div class="card">
-      <h2>Focus</h2>
-      <div class="seg" id="focusSeg">
-        <button data-focus="recommended" class="active">Recommended</button>
-        <button data-focus="core">Core</button>
-        <button data-focus="legs">Legs</button>
-        <button data-focus="upper">Upper</button>
+  <section class="controls" aria-label="Session settings">
+    <div>
+      <span class="ctl-label" id="lbl-kit">Kit</span>
+      <div class="seg" role="group" aria-labelledby="lbl-kit">
+        <button type="button" id="kit-trxkb" data-kit="trxkb" aria-pressed="true">TRX + KB</button>
+        <button type="button" id="kit-bw" data-kit="bw" aria-pressed="false">Bodyweight</button>
       </div>
     </div>
-
-    <div class="card">
-      <h2>Equipment (select all that apply)</h2>
-      <div class="equip-grid" id="equipGrid"></div>
-      <div class="error" id="equipError">Select at least one piece of equipment (Body weight works fine on its own).</div>
-    </div>
-
-    <div class="card">
-      <h2>Time</h2>
-      <div class="seg" id="timeSeg">
-        <button data-time="10">10 min</button>
-        <button data-time="20" class="active">20 min</button>
-        <button data-time="30">30 min</button>
+    <div>
+      <span class="ctl-label" id="lbl-rounds">Rounds</span>
+      <div class="seg" role="group" aria-labelledby="lbl-rounds">
+        <button type="button" id="rd-2" data-rounds="2" aria-pressed="false">2</button>
+        <button type="button" id="rd-3" data-rounds="3" aria-pressed="true">3</button>
+        <button type="button" id="rd-4" data-rounds="4" aria-pressed="false">4</button>
       </div>
-      <div class="hint">Includes a warm-up and cool-down inside the total time.</div>
     </div>
+    <button type="button" class="reroll" id="rerollBtn">
+      <span class="glyph" aria-hidden="true">↻</span> Reroll session
+    </button>
+  </section>
 
-    <button class="btn-primary" id="generateBtn">Generate Workout</button>
-  </div>
-
-  <!-- SESSION SCREEN -->
-  <div id="sessionScreen">
-    <div class="session-top">
-      <button class="back-link" id="backBtn">&larr; Back to setup</button>
-      <span class="hint" id="sessionMeta" style="margin:0;"></span>
+  <section class="sec" aria-labelledby="warm-title">
+    <div class="sec-head">
+      <h2 class="sec-title" id="warm-title">Warm-up</h2>
+      <span class="sec-note">3 min · one pass</span>
     </div>
-    <div class="overall-bar"><div id="overallFill"></div></div>
+    <ul class="rows warm" id="warmupList"></ul>
+  </section>
 
-    <span class="phase-pill work" id="phasePill">Work</span>
-    <h2 class="exercise-name" id="exName">—</h2>
-    <p class="exercise-cue" id="exCue">—</p>
-
-    <div class="timer-circle-wrap">
-      <div class="timer-num" id="timerNum">00:00</div>
+  <section class="sec" aria-labelledby="work-title">
+    <div class="sec-head">
+      <h2 class="sec-title" id="work-title">Working set</h2>
+      <span class="sec-note" id="workNote">A1→A2 · B1→B2 · C1→C2</span>
     </div>
-    <div class="up-next" id="upNext">Up next: —</div>
+    <div id="blocks"></div>
+  </section>
 
-    <div class="controls">
-      <button id="skipBtn"><span class="material-symbols-outlined">skip_next</span>Skip</button>
-      <button class="primary" id="pauseBtn"><span class="material-symbols-outlined">pause</span>Pause</button>
-      <button id="restartBtn"><span class="material-symbols-outlined">restart_alt</span>Restart</button>
-    </div>
-
-    <div class="plan-list" id="planList"></div>
-  </div>
-
-  <!-- DONE SCREEN -->
-  <div id="doneScreen">
-    <h2>Workout complete</h2>
-    <p id="doneSummary">Nice work.</p>
-    <button class="btn-primary" id="doneBtn" style="max-width:280px;margin:0 auto;">Build another set</button>
-  </div>
+  <footer class="foot">
+    <p>Rest as needed between pairs. Quality of position beats rep count.</p>
+    <p>Every movement here feeds a badminton pattern: lunge and recover, jump and land, rotate, or keep the racket shoulder healthy.</p>
+  </footer>
 
 </div>
 
 <script>
-/* =========================================================================
-   EXERCISE LIBRARY
-   equip: 'bodyweight' | 'pullup' | 'kettlebell' | 'dumbbell' |
-          'inclineTreadmill' | 'treadmill' | 'trx' | 'rope'
-   focus: array subset of ['core','legs','upper','full']  ('full' matches any focus)
-   tier:  1 low, 2 moderate, 3 high intensity
-   weighted: true if kg-load scaling applies (kettlebell/dumbbell)
-   cardio: true if duration-based (no discrete reps, just pace)
-   cue: base instruction / rep range shown to the user
-   ========================================================================= */
-const EQUIP_LABELS = {
-  bodyweight: 'Body weight',
-  pullup: 'Pull-up bar',
-  kettlebell: 'Kettlebell',
-  dumbbell: 'Dumbbell',
-  inclineTreadmill: 'Incline walking treadmill',
-  treadmill: 'Full treadmill',
-  trx: 'TRX',
-  rope: 'Skipping rope'
+/* ═══════════════════════════════════════════════════════════════
+   MOVEMENT LIBRARY
+   Slots are fixed so a random draw is always a coherent session:
+     A1 knee-dominant / deceleration   A2 horizontal pull
+     B1 hinge power                    B2 scapula + cuff
+     C1 lateral / change of direction  C2 rotation / anti-rotation
+   kit: "trxkb" | "bw" | "both"
+   r:   candidate rep values (the draw picks one)
+   u:   unit label
+   ═══════════════════════════════════════════════════════════════ */
+
+const U = { SIDE:'per side', REPS:'reps', EACH:'each way', STEPS:'steps', BREATH:'breaths', HOLD:'sec hold' };
+
+const WARMUP = {
+  W1: [ // hips + ankles
+    {n:'90/90 hip switch', kit:'both', r:[5,6,8], u:U.SIDE, c:'Opens internal and external rotation so deep lunges have somewhere to go.'},
+    {n:'Deep squat ankle rock', kit:'both', r:[8,10,12], u:U.REPS, c:'Dorsiflexion is what lets the front knee travel over a low net reach.'},
+    {n:'Cossack rock', kit:'both', r:[6,8,10], u:U.SIDE, c:'Preps the lateral hip range you live in on defensive coverage.'},
+    {n:"World's greatest stretch", kit:'both', r:[4,5,6], u:U.SIDE, c:'Hip flexor and thoracic rotation in one shape — the overhead reach position.'},
+    {n:'Hip airplane', kit:'both', r:[5,6,8], u:U.SIDE, c:'Teaches the standing leg to control rotation before you load it.'},
+    {n:'Knee circles + ankle CARs', kit:'both', r:[6,8,10], u:U.EACH, c:'Wakes up the joints that absorb every lunge landing.'}
+  ],
+  W2: [ // dynamic lower
+    {n:'Bodyweight reverse lunge', kit:'both', r:[6,8,10], u:U.SIDE, c:'Rehearses the lunge-and-push-back pattern under no load.'},
+    {n:'Bodyweight lateral lunge', kit:'both', r:[6,8,10], u:U.SIDE, c:'Grooves the sideways push-off to the wide forehand.'},
+    {n:'Split-stance ankle bounce', kit:'both', r:[10,12,15], u:U.SIDE, c:'Builds the springy ankle you land split-steps on.'},
+    {n:'Skater step, no jump', kit:'both', r:[8,10,12], u:U.SIDE, c:'Grounded version of the lateral bound — direction change without impact.'},
+    {n:'Walking knee hug into lunge', kit:'both', r:[5,6,8], u:U.SIDE, c:'Length through the hip flexor, then immediately load it.'},
+    {n:'A-march into split step', kit:'both', r:[8,10,12], u:U.REPS, c:'Ties the rhythm of a split step to a loaded stance.'}
+  ],
+  W3: [ // shoulders + scapula
+    {n:'TRX Y-T-W pull', kit:'trxkb', r:[5,6,8], u:U.EACH, c:'Switches the scapular stabilisers on before anything goes overhead.'},
+    {n:'Kettlebell halo', kit:'trxkb', r:[5,6,8], u:U.EACH, c:'Warms the shoulder girdle through a full circle under light load.'},
+    {n:'Kettlebell around-the-world', kit:'trxkb', r:[6,8,10], u:U.EACH, c:'Grip, forearm and shoulder in one continuous path.'},
+    {n:'Prone Y-T-W', kit:'bw', r:[6,8,10], u:U.EACH, c:'Lower trap and rear delt activation with nothing but the floor.'},
+    {n:'Wall slide', kit:'both', r:[8,10,12], u:U.REPS, c:'Trains overhead reach without the ribs flaring — the clean smash position.'},
+    {n:'Scapular push-up', kit:'both', r:[10,12,15], u:U.REPS, c:'Teaches the shoulder blade to move on the ribcage, not lock to it.'},
+    {n:'Shoulder CARs', kit:'both', r:[4,5,6], u:U.EACH, c:'Full-range circle to check the racket shoulder before loading it.'}
+  ]
 };
 
-const WARMUP_POOL = [
-  {name:'Arm Circles', equip:'bodyweight', cue:'Loosen shoulders, both directions'},
-  {name:'Leg Swings', equip:'bodyweight', cue:'Front-to-back, then side-to-side'},
-  {name:'Torso Twists', equip:'bodyweight', cue:'Controlled rotation, hips facing forward'},
-  {name:'March in Place', equip:'bodyweight', cue:'Knees to hip height, easy pace'},
-  {name:'Bodyweight Squats (easy pace)', equip:'bodyweight', cue:'Half-depth, warm the hips and knees'},
-  {name:'Cat-Cow Stretch', equip:'bodyweight', cue:'Slow spinal flexion/extension'},
-  {name:'Hip Circles', equip:'bodyweight', cue:'Hands on hips, big slow circles'}
-];
-const WARMUP_TREADMILL = [
-  {name:'Incline Treadmill Walk', equip:'inclineTreadmill', cue:'Warm, conversational pace, moderate incline'},
-  {name:'Treadmill Easy Walk', equip:'treadmill', cue:'Flat, easy pace to raise heart rate gently'}
-];
-
-const COOLDOWN_POOL = [
-  {name:'Standing Quad Stretch', equip:'bodyweight', cue:'Hold each side, gentle pull'},
-  {name:'Hamstring Stretch', equip:'bodyweight', cue:'Hinge forward, soft knees'},
-  {name:'Chest Opener Stretch', equip:'bodyweight', cue:'Clasp hands behind back, lift gently'},
-  {name:"Child's Pose", equip:'bodyweight', cue:'Sink hips back, breathe deeply'},
-  {name:'Standing Forward Fold', equip:'bodyweight', cue:'Let head and arms hang heavy'},
-  {name:'Shoulder Cross-Body Stretch', equip:'bodyweight', cue:'Hold each arm across chest'},
-  {name:'Box Breathing', equip:'bodyweight', cue:'Inhale 4s, hold 4s, exhale 4s, hold 4s'}
-];
-
-const MAIN_POOL = [
-  // Bodyweight
-  {name:'Bodyweight Squat', equip:'bodyweight', focus:['legs'], tier:1, muscle:'quads', cue:'15–20 reps'},
-  {name:'Walking Lunges', equip:'bodyweight', focus:['legs'], tier:2, muscle:'quads', cue:'10–12 reps per leg'},
-  {name:'Jump Squats', equip:'bodyweight', focus:['legs'], tier:3, muscle:'quads', cue:'12–15 reps'},
-  {name:'Glute Bridge', equip:'bodyweight', focus:['legs'], tier:1, muscle:'glutes', cue:'15–20 reps'},
-  {name:'Single-Leg Glute Bridge', equip:'bodyweight', focus:['legs'], tier:2, muscle:'glutes', cue:'10–12 reps per leg'},
-  {name:'Push-Ups', equip:'bodyweight', focus:['upper'], tier:2, muscle:'chest', cue:'10–15 reps'},
-  {name:'Incline Push-Ups', equip:'bodyweight', focus:['upper'], tier:1, muscle:'chest', cue:'12–15 reps, hands elevated'},
-  {name:'Diamond Push-Ups', equip:'bodyweight', focus:['upper'], tier:3, muscle:'triceps', cue:'8–12 reps'},
-  {name:'Pike Push-Ups', equip:'bodyweight', focus:['upper'], tier:3, muscle:'shoulders', cue:'8–10 reps'},
-  {name:'Chair Tricep Dips', equip:'bodyweight', focus:['upper'], tier:2, muscle:'triceps', cue:'10–15 reps'},
-  {name:'Plank Hold', equip:'bodyweight', focus:['core'], tier:1, muscle:'abs', cue:'Hold 30–45s, brace hard'},
-  {name:'Side Plank', equip:'bodyweight', focus:['core'], tier:2, muscle:'obliques', cue:'20–30s per side'},
-  {name:'Mountain Climbers', equip:'bodyweight', focus:['core','full'], tier:3, muscle:'abs', cue:'20–24 total reps, fast pace'},
-  {name:'Bicycle Crunches', equip:'bodyweight', focus:['core'], tier:2, muscle:'abs', cue:'20–24 total reps'},
-  {name:'Superman Hold', equip:'bodyweight', focus:['core'], tier:1, muscle:'lowerback', cue:'10–12 reps, 2s hold each'},
-  {name:'Burpees', equip:'bodyweight', focus:['full'], tier:3, muscle:'fullbody', cue:'8–10 reps'},
-  {name:'High Knees', equip:'bodyweight', focus:['full','legs'], tier:2, muscle:'legs', cue:'Fast pace, 30s'},
-  {name:'Jumping Jacks', equip:'bodyweight', focus:['full'], tier:1, muscle:'fullbody', cue:'30–40 reps'},
-  {name:'Bear Crawl Hold', equip:'bodyweight', focus:['full','core'], tier:2, muscle:'abs', cue:'20–30s, hips level'},
-  {name:'Squat to Reach', equip:'bodyweight', focus:['full','legs'], tier:1, muscle:'quads', cue:'12–15 reps'},
-
-  // Pull-up bar
-  {name:'Pull-Ups', equip:'pullup', focus:['upper'], tier:3, muscle:'back', cue:'5–8 reps'},
-  {name:'Chin-Ups', equip:'pullup', focus:['upper'], tier:3, muscle:'back', cue:'5–8 reps'},
-  {name:'Negative Pull-Ups', equip:'pullup', focus:['upper'], tier:2, muscle:'back', cue:'5–6 slow 4s negatives'},
-  {name:'Hanging Knee Raises', equip:'pullup', focus:['core'], tier:2, muscle:'abs', cue:'10–12 reps'},
-  {name:'Hanging Leg Raises', equip:'pullup', focus:['core'], tier:3, muscle:'abs', cue:'8–10 reps'},
-  {name:'Scapular Pulls', equip:'pullup', focus:['upper'], tier:1, muscle:'back', cue:'10–12 reps'},
-  {name:'Dead Hang', equip:'pullup', focus:['core','upper'], tier:1, muscle:'back', cue:'Hold 20–30s'},
-
-  // Kettlebell (weighted)
-  {name:'Kettlebell Swings', equip:'kettlebell', focus:['full'], tier:2, muscle:'hamstrings', weighted:true, cue:'15–20 reps'},
-  {name:'KB Goblet Squat', equip:'kettlebell', focus:['legs'], tier:2, muscle:'quads', weighted:true, cue:'12–15 reps'},
-  {name:'KB Romanian Deadlift', equip:'kettlebell', focus:['legs'], tier:2, muscle:'hamstrings', weighted:true, cue:'10–12 reps'},
-  {name:'KB Clean & Press', equip:'kettlebell', focus:['upper','full'], tier:3, muscle:'shoulders', weighted:true, cue:'8–10 reps per side'},
-  {name:'KB Snatch', equip:'kettlebell', focus:['full'], tier:3, muscle:'fullbody', weighted:true, cue:'6–8 reps per side'},
-  {name:'KB Halo', equip:'kettlebell', focus:['core'], tier:1, muscle:'core', weighted:true, cue:'8–10 reps per direction'},
-  {name:'KB Goblet Reverse Lunge', equip:'kettlebell', focus:['legs'], tier:2, muscle:'quads', weighted:true, cue:'10 reps per leg'},
-  {name:'KB Russian Twist', equip:'kettlebell', focus:['core'], tier:1, muscle:'obliques', weighted:true, cue:'16–20 total reps'},
-  {name:"KB Farmer's Carry", equip:'kettlebell', focus:['full'], tier:1, muscle:'fullbody', weighted:true, cue:'30–40s walk'},
-
-  // Dumbbell (weighted)
-  {name:'DB Goblet Squat', equip:'dumbbell', focus:['legs'], tier:2, muscle:'quads', weighted:true, cue:'12–15 reps'},
-  {name:'DB Romanian Deadlift', equip:'dumbbell', focus:['legs'], tier:2, muscle:'hamstrings', weighted:true, cue:'10–12 reps'},
-  {name:'DB Shoulder Press', equip:'dumbbell', focus:['upper'], tier:2, muscle:'shoulders', weighted:true, cue:'10–12 reps'},
-  {name:'DB Bent-Over Row', equip:'dumbbell', focus:['upper'], tier:2, muscle:'back', weighted:true, cue:'10–12 reps'},
-  {name:'DB Renegade Row', equip:'dumbbell', focus:['full','upper'], tier:3, muscle:'back', weighted:true, cue:'8–10 reps per side'},
-  {name:'DB Reverse Lunge', equip:'dumbbell', focus:['legs'], tier:2, muscle:'quads', weighted:true, cue:'10 reps per leg'},
-  {name:'DB Russian Twist', equip:'dumbbell', focus:['core'], tier:1, muscle:'obliques', weighted:true, cue:'16–20 total reps'},
-  {name:'DB Thruster', equip:'dumbbell', focus:['full'], tier:3, muscle:'fullbody', weighted:true, cue:'8–10 reps'},
-  {name:'DB Curl to Press', equip:'dumbbell', focus:['upper'], tier:1, muscle:'shoulders', weighted:true, cue:'10–12 reps'},
-
-  // Incline walking treadmill
-  {name:'Incline Power Walk', equip:'inclineTreadmill', focus:['legs','full'], tier:1, muscle:'legs', cardio:true, cue:'Brisk pace, steep incline'},
-  {name:'Incline Walk Intervals', equip:'inclineTreadmill', focus:['legs','full'], tier:2, muscle:'legs', cardio:true, cue:'Alternate fast/steady pace'},
-
-  // Full treadmill
-  {name:'Treadmill Sprint Interval', equip:'treadmill', focus:['full'], tier:3, muscle:'legs', cardio:true, cue:'Hard sprint pace'},
-  {name:'Treadmill Jog', equip:'treadmill', focus:['full'], tier:2, muscle:'legs', cardio:true, cue:'Steady jogging pace'},
-  {name:'Treadmill Fast Walk', equip:'treadmill', focus:['full','legs'], tier:1, muscle:'legs', cardio:true, cue:'Brisk walking pace'},
-
-  // TRX
-  {name:'TRX Row', equip:'trx', focus:['upper'], tier:2, muscle:'back', cue:'10–12 reps'},
-  {name:'TRX Chest Press', equip:'trx', focus:['upper'], tier:2, muscle:'chest', cue:'10–12 reps'},
-  {name:'TRX Squat', equip:'trx', focus:['legs'], tier:1, muscle:'quads', cue:'12–15 reps'},
-  {name:'TRX Pike', equip:'trx', focus:['core'], tier:3, muscle:'abs', cue:'8–10 reps'},
-  {name:'TRX Hamstring Curl', equip:'trx', focus:['legs'], tier:2, muscle:'hamstrings', cue:'10–12 reps'},
-  {name:'TRX Mountain Climbers', equip:'trx', focus:['core','full'], tier:3, muscle:'abs', cue:'20–24 total reps'},
-  {name:'TRX Y-Fly', equip:'trx', focus:['upper'], tier:1, muscle:'back', cue:'10–12 reps'},
-
-  // Skipping rope
-  {name:'Skipping Rope — Basic', equip:'rope', focus:['full'], tier:2, muscle:'legs', cardio:true, cue:'Steady pace'},
-  {name:'Skipping Rope — High Knees', equip:'rope', focus:['full','legs'], tier:3, muscle:'legs', cardio:true, cue:'Fast pace, knees up'},
-  {name:'Skipping Rope — Slow Pace', equip:'rope', focus:['full'], tier:1, muscle:'legs', cardio:true, cue:'Easy recovery pace'}
-];
-
-/* =========================================================================
-   SESSION GENERATION
-   ========================================================================= */
-
-function loadFactor(kind, kg){
-  // 0 light, 1 moderate, 2 heavy
-  if (!kg || kg <= 0) return 0;
-  if (kind === 'kettlebell') return kg < 12 ? 0 : (kg <= 20 ? 1 : 2);
-  return kg < 10 ? 0 : (kg <= 20 ? 1 : 2); // dumbbell
-}
-
-function recoveryBand(score){
-  if (score >= 70) return {band:'high', work:40, rest:15, tiers:[1,2,3]};
-  if (score >= 40) return {band:'moderate', work:35, rest:20, tiers:[1,2]};
-  return {band:'low', work:25, rest:25, tiers:[1]};
-}
-
-function scaleCue(ex, factor){
-  if (!ex.weighted || !factor) return ex.cue;
-  // shift rep ranges down a notch per load factor step
-  const m = ex.cue.match(/(\d+)[–-](\d+)/);
-  if (!m) return ex.cue;
-  const lo = Math.max(3, parseInt(m[1]) - factor*2);
-  const hi = Math.max(lo+1, parseInt(m[2]) - factor*2);
-  return ex.cue.replace(m[0], lo + '–' + hi);
-}
-
-function shuffle(arr){
-  for (let i = arr.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-function focusMatches(e, focus){
-  return focus === 'recommended' ? true : (e.focus.includes(focus) || e.focus.includes('full'));
-}
-
-/* ---------------- Workout history (cross-session muscle recovery) ----------------
-   Stored in localStorage so two consecutive sessions (e.g. today/tomorrow) don't
-   hammer the same muscle group at moderate/high intensity back-to-back. */
-const RECENCY_WINDOW_HOURS = 48;
-
-function loadHistory(){
-  try { return JSON.parse(localStorage.getItem('novaxa_history') || '[]'); } catch(e){ return []; }
-}
-function saveHistoryEntry(mainExercises){
-  try {
-    const history = loadHistory();
-    history.push({ ts: Date.now(), exercises: mainExercises.map(e => ({name:e.name, muscle:e.muscle, tier:e.tier})) });
-    const cutoff = Date.now() - 14*24*60*60*1000; // keep 2 weeks max
-    localStorage.setItem('novaxa_history', JSON.stringify(history.filter(h => h.ts >= cutoff)));
-  } catch(e){}
-}
-function getRecentMuscles(history, windowHours){
-  const cutoff = Date.now() - windowHours*60*60*1000;
-  const muscles = new Set();
-  history.forEach(h => { if (h.ts >= cutoff) h.exercises.forEach(e => { if (e.tier >= 2 && e.muscle) muscles.add(e.muscle); }); });
-  return muscles;
-}
-function getRecentNames(history, windowHours){
-  const cutoff = Date.now() - windowHours*60*60*1000;
-  const names = new Set();
-  history.forEach(h => { if (h.ts >= cutoff) h.exercises.forEach(e => names.add(e.name)); });
-  return names;
-}
-
-/* ---------------- Main exercise selection ----------------
-   Rules (in priority order, each relaxed only if it can't fill the set):
-   1. Guarantee at least one pick per piece of equipment the user actually checked
-      (fixes gear you selected never showing up).
-   2. Cap Body weight picks at ~50% of slots when other equipment is also selected
-      (fixes bodyweight drowning out the gear you checked).
-   3. Avoid muscles/exercises trained at tier 2-3 in the last 48h (fixes doing the
-      same hard move on the same muscle two days in a row).
-   4. Only if the above leave too few candidates, relax them one at a time so the
-      set never comes up short. */
-function buildMainSelection(opts){
-  const {pool, focus, tiersAllowed, count, equipmentChecked, recentMuscles, recentNames} = opts;
-  const bodyweightChecked = equipmentChecked.includes('bodyweight');
-  const otherEquip = shuffle(equipmentChecked.filter(k => k !== 'bodyweight').slice());
-  const maxBW = !bodyweightChecked ? 0 : (otherEquip.length === 0 ? count : Math.ceil(count/2));
-
-  const chosen = [];
-  const usedNames = new Set();
-  let bwCount = 0;
-
-  function base(e){ return tiersAllowed.includes(e.tier) && focusMatches(e, focus) && !usedNames.has(e.name); }
-  function fresh(e){ return (e.tier < 2 || !recentMuscles.has(e.muscle)) && !recentNames.has(e.name); }
-  function bwOk(e){ return e.equip !== 'bodyweight' || bwCount < maxBW; }
-
-  function tryAdd(ex){
-    if (!ex) return false;
-    chosen.push(ex); usedNames.add(ex.name);
-    if (ex.equip === 'bodyweight') bwCount++;
-    return true;
-  }
-
-  // Pass 1: one guaranteed slot per selected non-bodyweight equipment type
-  for (const eq of otherEquip){
-    if (chosen.length >= count) break;
-    let candidates = pool.filter(e => e.equip === eq && base(e) && fresh(e));
-    if (!candidates.length) candidates = pool.filter(e => e.equip === eq && base(e));
-    if (candidates.length) tryAdd(candidates[Math.floor(Math.random()*candidates.length)]);
-  }
-
-  // Pass 2: round-robin across muscle categories, respecting bodyweight cap + recency
-  const cats = ['legs','upper','core','full'];
-  let guard = 0;
-  while (chosen.length < count && guard < 400){
-    const cat = cats[guard % cats.length];
-    const candidates = pool.filter(e => e.focus.includes(cat) && base(e) && fresh(e) && bwOk(e));
-    if (candidates.length) tryAdd(candidates[Math.floor(Math.random()*candidates.length)]);
-    guard++;
-  }
-
-  // Pass 3: relax recency (allow recently-worked muscles back in) if still short
-  guard = 0;
-  while (chosen.length < count && guard < 400){
-    const cat = cats[guard % cats.length];
-    const candidates = pool.filter(e => e.focus.includes(cat) && base(e) && bwOk(e));
-    if (candidates.length) tryAdd(candidates[Math.floor(Math.random()*candidates.length)]);
-    guard++;
-  }
-
-  // Pass 4: relax bodyweight cap if still short (fills the set rather than coming up empty)
-  if (chosen.length < count){
-    const candidates = pool.filter(e => base(e));
-    shuffle(candidates);
-    for (const e of candidates){
-      if (chosen.length >= count) break;
-      tryAdd(e);
-    }
-  }
-
-  return chosen;
-}
-
-function buildFillerBlock(pool, seconds, equipSet){
-  // split seconds evenly across up to 3 available items, back-to-back, no rest
-  const available = pool.filter(e => equipSet.has(e.equip));
-  shuffle(available);
-  const items = available.slice(0, 3);
-  if (!items.length) items.push(pool[0]);
-  const base = Math.floor(seconds / items.length);
-  let remainder = seconds - base * items.length;
-  return items.map((it, idx) => {
-    const dur = base + (idx === items.length - 1 ? remainder : 0);
-    return {kind: items === WARMUP_POOL || pool===WARMUP_POOL || pool===WARMUP_TREADMILL ? 'warmup' : 'cooldown',
-             name: it.name, cue: it.cue, seconds: dur};
-  });
-}
-
-function generateWorkout(params){
-  const {recovery, focus, equipment, kettlebellKg, dumbbellKg, minutes} = params;
-  const equipSet = new Set(equipment); // only what the user actually checked
-  const warmupEquipSet = new Set(['bodyweight', ...equipment]); // mobility work needs no gear either way
-  const totalSeconds = minutes * 60;
-  const warmupSeconds = minutes === 10 ? 60 : (minutes === 20 ? 120 : 150);
-  const cooldownSeconds = minutes === 10 ? 60 : (minutes === 20 ? 120 : 150);
-  const mainSeconds = totalSeconds - warmupSeconds - cooldownSeconds;
-
-  const {band, work, rest, tiers} = recoveryBand(recovery);
-
-  // filter main pool by available equipment
-  let pool = MAIN_POOL.filter(e => equipSet.has(e.equip));
-
-  // heavy-load safety: exclude tier-3 weighted exercises if load is heavy
-  const kbFactor = loadFactor('kettlebell', kettlebellKg);
-  const dbFactor = loadFactor('dumbbell', dumbbellKg);
-  pool = pool.filter(e => {
-    if (!e.weighted) return true;
-    const f = e.equip === 'kettlebell' ? kbFactor : dbFactor;
-    return !(f === 2 && e.tier === 3);
-  });
-
-  const history = loadHistory();
-  const recentMuscles = getRecentMuscles(history, RECENCY_WINDOW_HOURS);
-  const recentNames = getRecentNames(history, RECENCY_WINDOW_HOURS);
-
-  const exCount = minutes === 10 ? 3 : (minutes === 20 ? 5 : 6);
-  let chosen = buildMainSelection({
-    pool, focus, tiersAllowed: tiers, count: Math.min(exCount, Math.max(3, pool.length)),
-    equipmentChecked: equipment, recentMuscles, recentNames
-  });
-  if (!chosen.length){
-    chosen = buildMainSelection({
-      pool: MAIN_POOL.filter(e=>e.equip==='bodyweight'), focus, tiersAllowed:[1,2,3], count:4,
-      equipmentChecked:['bodyweight'], recentMuscles:new Set(), recentNames:new Set()
-    });
-  }
-  const chosenMuscles = new Set(chosen.map(e=>e.muscle));
-  const avoidedMuscles = [...recentMuscles].filter(m => !chosenMuscles.has(m));
-
-  // per-exercise rest bump from load
-  const perExRest = chosen.map(e => {
-    if (!e.weighted) return rest;
-    const f = e.equip === 'kettlebell' ? kbFactor : dbFactor;
-    return rest + f * 5;
-  });
-
-  const roundDuration = chosen.reduce((s, e, i) => s + work + perExRest[i], 0);
-  let rounds = Math.max(2, Math.min(4, Math.round(mainSeconds / roundDuration)));
-  let total = rounds * roundDuration;
-  let diff = mainSeconds - total;
-
-  // distribute diff across rest seconds (min floor 8s) to hit exact main duration
-  const slots = rounds * chosen.length;
-  let base = Math.floor(diff / slots);
-  let leftover = diff - base * slots;
-
-  const mainSequence = [];
-  let slotIdx = 0;
-  for (let r = 1; r <= rounds; r++){
-    chosen.forEach((e, i) => {
-      let restAdj = perExRest[i] + base + (slotIdx === slots - 1 ? leftover : 0);
-      if (restAdj < 8) restAdj = 8;
-      slotIdx++;
-      const factor = e.equip === 'kettlebell' ? kbFactor : (e.equip === 'dumbbell' ? dbFactor : 0);
-      const loadLabel = e.weighted ? (e.equip === 'kettlebell'
-        ? (kettlebellKg ? kettlebellKg + 'kg kettlebell' : 'kettlebell')
-        : (dumbbellKg ? dumbbellKg + 'kg dumbbell' : 'dumbbell')) : null;
-      mainSequence.push({
-        kind: 'work', name: e.name, tier: e.tier,
-        cue: scaleCue(e, factor) + (loadLabel ? ' • ' + loadLabel : ''),
-        seconds: work, round: r, roundsTotal: rounds
-      });
-      mainSequence.push({kind: 'rest', name: 'Rest', cue: 'Shake it out, breathe', seconds: restAdj, round: r, roundsTotal: rounds});
-    });
-  }
-  // drop the very last rest interval but keep its seconds (folded into cool-down below)
-  // so the total session length still matches the selected time exactly
-  let carryToCooldown = 0;
-  if (mainSequence.length && mainSequence[mainSequence.length-1].kind === 'rest'){
-    carryToCooldown = mainSequence.pop().seconds;
-  }
-
-  // warmup block (mobility work — always allowed regardless of equipment checkboxes)
-  const wPool = (equipSet.has('inclineTreadmill') || equipSet.has('treadmill'))
-    ? [...WARMUP_TREADMILL.filter(w => equipSet.has(w.equip)), ...WARMUP_POOL.slice(0,1)]
-    : WARMUP_POOL;
-  const warmupItems = buildFillerBlock(wPool, warmupSeconds, warmupEquipSet).map(x => ({...x, kind:'warmup'}));
-
-  const cooldownItems = buildFillerBlock(COOLDOWN_POOL, cooldownSeconds + carryToCooldown, warmupEquipSet).map(x => ({...x, kind:'cooldown'}));
-
-  const sequence = [...warmupItems, ...mainSequence, ...cooldownItems];
-  const grandTotal = sequence.reduce((s,x)=>s+x.seconds,0);
-
-  return {
-    sequence, band, rounds, mainSeconds, warmupSeconds, cooldownSeconds,
-    grandTotal, exerciseCount: chosen.length, avoidedMuscles,
-    mainExercises: chosen.map(e => ({name:e.name, muscle:e.muscle, tier:e.tier}))
-  };
-}
-
-/* =========================================================================
-   UI WIRING
-   ========================================================================= */
-const state = {
-  focus: 'recommended',
-  minutes: 20,
-  equipment: {}, // key -> {checked, kg}
+const POOL = {
+  A1: [ // knee-dominant, lunge + deceleration
+    {n:'KB goblet reverse lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'The lunge-and-push-back the net kill demands, loaded.'},
+    {n:'KB goblet split squat', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Single-leg strength in the deep position you finish a drop shot in.'},
+    {n:'KB front-rack step-back lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Load in front forces an upright torso, like a high net reach.'},
+    {n:'KB goblet squat, 3-second lower', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Eccentric strength — the brake you need when you land off a jump.'},
+    {n:'KB goblet curtsy lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Trains the crossover step into the backhand rear corner.'},
+    {n:'TRX-assisted pistol squat', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'One-leg control for landings you only get one foot down on.'},
+    {n:'TRX lunge, rear foot in strap', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Unstable back foot makes the front hip do the whole job.'},
+    {n:'KB suitcase reverse lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'One-sided load — the trunk resists tipping while the leg works.'},
+    {n:'Reverse lunge', kit:'bw', r:[10,12,15], u:U.SIDE, c:'The base lunge pattern: step, absorb, drive back to centre.'},
+    {n:'Split squat, 2-second pause', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Owns the bottom position instead of bouncing out of it.'},
+    {n:'Bulgarian split squat', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Deepest single-leg range you can reach without gear.'},
+    {n:'Tempo squat, 3-second lower', kit:'bw', r:[10,12,15], u:U.REPS, c:'Builds the deceleration strength that saves the knee on landing.'},
+    {n:'Step-up onto a chair', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Concentric single-leg drive, the push out of a deep lunge.'},
+    {n:'Curtsy lunge', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Crossover pattern for the backhand corner scramble.'},
+    {n:'Assisted pistol squat', kit:'bw', r:[5,6,8], u:U.SIDE, c:'Hold a doorframe and own the deepest single-leg position you have.'},
+    {n:'Walking lunge', kit:'bw', r:[10,12,14], u:U.SIDE, c:'Continuous lunging under fatigue, like a long rally.'}
+  ],
+  A2: [ // horizontal pull
+    {n:'TRX row', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Mid-back and rear shoulder — the brake on every overhead swing.'},
+    {n:'TRX wide row', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Biases the rear delts that decelerate a smash.'},
+    {n:'TRX single-arm row', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Matches badminton’s one-sided pulling demand.'},
+    {n:'TRX row, feet elevated', kit:'trxkb', r:[6,8,10], u:U.REPS, c:'Same pattern, heavier — build the pull, not just maintain it.'},
+    {n:'KB bent-over row', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Loaded pull with the hinge held — back strength under position.'},
+    {n:'KB gorilla row', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Alternating pull with an anti-rotation cost on every rep.'},
+    {n:'KB high-elbow row', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Pulls into the rear delt rather than the lat — the balancing muscle.'},
+    {n:'Inverted row under a table', kit:'bw', r:[8,10,12], u:U.REPS, c:'The one real horizontal pull you can get with no kit.'},
+    {n:'Towel row on a door handle', kit:'bw', r:[10,12,15], u:U.REPS, c:'Loads the mid-back and the grip at the same time.'},
+    {n:'Reverse snow angel', kit:'bw', r:[10,12,15], u:U.REPS, c:'Rear shoulder and mid-back through full range, floor only.'},
+    {n:'Prone swimmer pull', kit:'bw', r:[10,12,15], u:U.REPS, c:'Pulls the shoulder blades down and back against gravity.'},
+    {n:'Prone W hold-and-pull', kit:'bw', r:[10,12,15], u:U.REPS, c:'Short-range rear delt work that keeps the racket shoulder honest.'}
+  ],
+  B1: [ // hinge power
+    {n:'KB swing', kit:'trxkb', r:[12,15,20], u:U.REPS, c:'Hip snap — the same extension that powers a jump smash.'},
+    {n:'KB single-arm swing', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Power through one hip, like taking off from the backhand corner.'},
+    {n:'KB high pull', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Fast triple extension finishing upward, close to a jump.'},
+    {n:'KB clean', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'Explosive hinge into a catch — produce force, then absorb it.'},
+    {n:'KB snatch', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'Top-end hip power finishing overhead, the full smash chain.'},
+    {n:'KB Romanian deadlift', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Hamstring and glute strength that lets you jump again on rep twenty.'},
+    {n:'KB single-leg RDL', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'The exact balance demand of landing on one foot in the rear court.'},
+    {n:'TRX hamstring curl', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Posterior chain across the knee — landing control, not just power.'},
+    {n:'Squat jump', kit:'bw', r:[8,10,12], u:U.REPS, c:'Raw vertical output for the jump smash.'},
+    {n:'Split jump', kit:'bw', r:[6,8,10], u:U.SIDE, c:'Alternating takeoff, like scrambling out of the rear corner.'},
+    {n:'Broad jump, walk back', kit:'bw', r:[5,6,8], u:U.REPS, c:'Horizontal power — the lunge to the net starts here.'},
+    {n:'Pogo hop', kit:'bw', r:[20,25,30], u:U.REPS, c:'Ankle stiffness for repeated push-offs with no knee bend.'},
+    {n:'Single-leg glute bridge', kit:'bw', r:[10,12,15], u:U.SIDE, c:'Hip extension strength without needing load.'},
+    {n:'Nordic curl negative', kit:'bw', r:[4,5,6], u:U.REPS, c:'Hardest hamstring brake you can train — protects the landing leg.'},
+    {n:'Single-leg hinge, arms overhead', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Balance and hamstring length in the reaching position.'},
+    {n:'Tuck jump', kit:'bw', r:[6,8,10], u:U.REPS, c:'Fast ground contact — get off the floor and back on guard.'}
+  ],
+  B2: [ // scapula + rotator cuff
+    {n:'TRX Y-fly', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Lower trap and cuff — the pair that protect a smashing shoulder.'},
+    {n:'TRX face pull', kit:'trxkb', r:[10,12,15], u:U.REPS, c:'External rotation under tension, the anti-impingement rep.'},
+    {n:'TRX T-fly', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Keeps the shoulder blade set when the arm goes overhead.'},
+    {n:'TRX I-Y-T complex', kit:'trxkb', r:[5,6,8], u:U.EACH, c:'Sweeps the whole scapular range in one set.'},
+    {n:'KB bottoms-up press, half kneeling', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'Forces the cuff to stabilise a wobbling load overhead.'},
+    {n:'KB half-kneeling overhead press', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Overhead strength with no room to arch the lower back.'},
+    {n:'KB armbar', kit:'trxkb', r:[4,5,6], u:U.BREATH, c:'Loaded shoulder stability at end range, held and breathed through.'},
+    {n:'KB waiter carry', kit:'trxkb', r:[20,25,30], u:U.STEPS, c:'Overhead position under fatigue, exactly where injuries start.'},
+    {n:'Prone Y-T-W', kit:'bw', r:[8,10,12], u:U.EACH, c:'Full scapular sweep, no equipment, no excuse to skip it.'},
+    {n:'Scapular push-up', kit:'bw', r:[12,15,18], u:U.REPS, c:'Serratus control — the muscle that lets the blade rotate up.'},
+    {n:'Wall slide with lift-off', kit:'bw', r:[8,10,12], u:U.REPS, c:'Overhead reach without rib flare, then a second of pure lower trap.'},
+    {n:'Side-lying external rotation', kit:'bw', r:[12,15,18], u:U.SIDE, c:'Direct cuff work — small, boring, and the reason shoulders last.'},
+    {n:'Prone external rotation, elbows at 90', kit:'bw', r:[10,12,15], u:U.REPS, c:'Trains the cocking position of the smash under control.'},
+    {n:'Pike push-up', kit:'bw', r:[6,8,10], u:U.REPS, c:'Overhead pressing strength with bodyweight only.'}
+  ],
+  C1: [ // lateral / change of direction
+    {n:'KB lateral lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Side-to-side coverage and the push back to base, loaded.'},
+    {n:'KB goblet Cossack squat', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'Deepest lateral range for a wide defensive reach.'},
+    {n:'KB lateral step-up', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Sideways drive out of a low position.'},
+    {n:'KB suitcase lateral march', kit:'trxkb', r:[10,12,15], u:U.SIDE, c:'Loaded on one side while moving sideways — the real court demand.'},
+    {n:'KB skater step, no jump', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'The lateral push-off pattern, grounded and loaded.'},
+    {n:'TRX lateral lunge', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Assisted depth so the hip can reach further than it could alone.'},
+    {n:'TRX crossing balance lunge', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Rotation and lateral load together, like chasing a cross-court drop.'},
+    {n:'Lateral lunge', kit:'bw', r:[10,12,15], u:U.SIDE, c:'The sideways step and recovery, unloaded and fast.'},
+    {n:'Cossack squat', kit:'bw', r:[6,8,10], u:U.SIDE, c:'Deep lateral range — where wide defensive digs happen.'},
+    {n:'Skater bound', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Explosive sideways push-off with a landing to control.'},
+    {n:'Lateral bound to stick', kit:'bw', r:[6,8,10], u:U.SIDE, c:'Land and hold — the ability to stop is what lets you change direction.'},
+    {n:'Lateral shuffle, three steps to stop', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Court footwork with a deliberate brake at the end.'},
+    {n:'Lateral step-over', kit:'bw', r:[12,15,18], u:U.SIDE, c:'Quick feet across the body, the mid-court adjustment step.'},
+    {n:'Lateral crawl', kit:'bw', r:[10,12,15], u:U.SIDE, c:'Hip and shoulder working sideways together under tension.'}
+  ],
+  C2: [ // rotation / anti-rotation
+    {n:'KB half-kneeling woodchop', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Rotational core that carries hip power into the racket head.'},
+    {n:'KB half-kneeling reverse chop', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Low-to-high line of an underarm clear from the net.'},
+    {n:'KB windmill', kit:'trxkb', r:[4,5,6], u:U.SIDE, c:'Rotation and overhead stability in the same rep.'},
+    {n:'KB suitcase carry', kit:'trxkb', r:[20,25,30], u:U.STEPS, c:'Resists side bend, the same cost as a one-handed stretch reach.'},
+    {n:'KB Russian twist', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Loaded trunk rotation through a controlled arc.'},
+    {n:'TRX Pallof press', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Anti-rotation — stops the trunk leaking the power the hips made.'},
+    {n:'TRX body saw', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Anti-extension for the arched position a jump smash puts you in.'},
+    {n:'TRX fallout', kit:'trxkb', r:[6,8,10], u:U.REPS, c:'Protects the lower back when the arm reaches overhead and behind.'},
+    {n:'Half-kneeling anti-rotation reach', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Holds the trunk still while the arm travels — the transfer test.'},
+    {n:'Dead bug', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Ribs down, back flat, limbs moving — the base of every rotation.'},
+    {n:'Side plank with top-leg lift', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Lateral trunk and hip, the anti-side-bend of a wide lunge.'},
+    {n:'Side plank thread the needle', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Rotation through a braced trunk instead of a loose one.'},
+    {n:'Hollow body rock', kit:'bw', r:[12,15,20], u:U.REPS, c:'Anti-extension endurance for the overhead position.'},
+    {n:'Bird dog with a 2-second hold', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Opposite limbs, still spine — the pattern behind every stroke.'},
+    {n:'Plank shoulder tap', kit:'bw', r:[10,12,15], u:U.SIDE, c:'Anti-rotation under an unstable base.'},
+    {n:'Slow bicycle crunch', kit:'bw', r:[10,12,15], u:U.SIDE, c:'Rotation with the hips involved, not just the ribs.'}
+  ]
 };
 
-const EQUIP_KEYS = ['bodyweight','pullup','kettlebell','dumbbell','inclineTreadmill','treadmill','trx','rope'];
+const BLOCK_META = {
+  A: {letter:'A', theme:'Lunge + pull'},
+  B: {letter:'B', theme:'Hip power + shoulder'},
+  C: {letter:'C', theme:'Lateral + rotation'}
+};
 
-function buildEquipGrid(){
-  const grid = document.getElementById('equipGrid');
-  grid.innerHTML = '';
-  EQUIP_KEYS.forEach(key => {
-    const needsKg = key === 'kettlebell' || key === 'dumbbell';
-    const div = document.createElement('div');
-    div.className = 'equip-item';
-    div.dataset.key = key;
-    div.innerHTML = `
-      <div class="top">
-        <input type="checkbox" data-key="${key}">
-        <span class="label">${EQUIP_LABELS[key]}</span>
-      </div>
-      ${needsKg ? `<div class="kg-row"><input type="number" min="1" max="60" placeholder="kg" data-kg="${key}"><span>kg</span></div>` : ''}
-    `;
-    grid.appendChild(div);
-  });
-}
-buildEquipGrid();
+/* ═══════════════════════════════════════════════════════════════
+   STATE + DRAW
+   ═══════════════════════════════════════════════════════════════ */
 
-// restore saved settings
-try {
-  const saved = JSON.parse(localStorage.getItem('novaxa_settings') || 'null');
-  if (saved){
-    document.getElementById('recoverySlider').value = saved.recovery ?? 65;
-    state.focus = saved.focus || 'recommended';
-    state.minutes = saved.minutes || 20;
-    if (saved.equipment) state.equipment = saved.equipment;
-  }
-} catch(e){}
+const STORE_KEY = 'nitro.settings.v1';
+const state = { kit:'trxkb', rounds:3, warm:{}, work:{}, code:'' };
 
-document.getElementById('recoveryVal').textContent = document.getElementById('recoverySlider').value + '%';
-document.getElementById('recoverySlider').addEventListener('input', e => {
-  document.getElementById('recoveryVal').textContent = e.target.value + '%';
-});
+function fits(mv, kit){ return mv.kit === 'both' || mv.kit === kit; }
+function pick(list){ return list[Math.floor(Math.random() * list.length)]; }
 
-document.querySelectorAll('#focusSeg button').forEach(btn => {
-  if (btn.dataset.focus === state.focus) btn.classList.add('active'); else btn.classList.remove('active');
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#focusSeg button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    state.focus = btn.dataset.focus;
-  });
-});
-
-document.querySelectorAll('#timeSeg button').forEach(btn => {
-  if (parseInt(btn.dataset.time) === state.minutes) btn.classList.add('active'); else btn.classList.remove('active');
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#timeSeg button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    state.minutes = parseInt(btn.dataset.time);
-  });
-});
-
-// apply restored equipment state to DOM
-document.querySelectorAll('#equipGrid .equip-item').forEach(div => {
-  const key = div.dataset.key;
-  const cb = div.querySelector('input[type=checkbox]');
-  const kgInput = div.querySelector('input[data-kg]');
-  const saved = state.equipment[key];
-  if (saved && saved.checked){
-    cb.checked = true;
-  }
-  if (saved && saved.kg && kgInput) kgInput.value = saved.kg;
-
-  cb.addEventListener('change', () => {});
-  if (kgInput){
-    kgInput.addEventListener('input', () => {});
-  }
-});
-
-function collectEquipment(){
-  const equipment = [];
-  let kettlebellKg = null, dumbbellKg = null;
-  document.querySelectorAll('#equipGrid .equip-item').forEach(div => {
-    const key = div.dataset.key;
-    const cb = div.querySelector('input[type=checkbox]');
-    const kgInput = div.querySelector('input[data-kg]');
-    if (cb.checked){
-      equipment.push(key);
-      if (key === 'kettlebell') kettlebellKg = kgInput.value ? parseFloat(kgInput.value) : null;
-      if (key === 'dumbbell') dumbbellKg = kgInput.value ? parseFloat(kgInput.value) : null;
-    }
-  });
-  return {equipment, kettlebellKg, dumbbellKg};
+function drawMove(pool, kit, avoidName){
+  const eligible = pool.filter(m => fits(m, kit));
+  const fresh = eligible.filter(m => m.n !== avoidName);
+  const mv = pick(fresh.length ? fresh : eligible);
+  return { n: mv.n, c: mv.c, u: mv.u, reps: pick(mv.r) };
 }
 
-document.getElementById('generateBtn').addEventListener('click', () => {
-  const {equipment, kettlebellKg, dumbbellKg} = collectEquipment();
-  const errorEl = document.getElementById('equipError');
-  if (equipment.length === 0){
-    errorEl.style.display = 'block';
-    return;
-  }
-  errorEl.style.display = 'none';
+function makeCode(){
+  const a = 'ACDEFHJKLMNPRTUVWXY349';
+  let s = '';
+  for (let i = 0; i < 4; i++) s += a[Math.floor(Math.random() * a.length)];
+  return s;
+}
 
-  const recovery = parseInt(document.getElementById('recoverySlider').value);
+function rollAll(){
+  ['W1','W2','W3'].forEach(k => { state.warm[k] = drawMove(WARMUP[k], state.kit, state.warm[k] && state.warm[k].n); });
+  ['A1','A2','B1','B2','C1','C2'].forEach(k => { state.work[k] = drawMove(POOL[k], state.kit, state.work[k] && state.work[k].n); });
+  state.code = makeCode();
+}
 
-  // persist settings
-  const equipmentState = {};
-  document.querySelectorAll('#equipGrid .equip-item').forEach(div => {
-    const key = div.dataset.key;
-    const cb = div.querySelector('input[type=checkbox]');
-    const kgInput = div.querySelector('input[data-kg]');
-    equipmentState[key] = {checked: cb.checked, kg: kgInput ? kgInput.value : null};
+function rollBlock(letter){
+  [letter + '1', letter + '2'].forEach(k => { state.work[k] = drawMove(POOL[k], state.kit, state.work[k].n); });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER
+   ═══════════════════════════════════════════════════════════════ */
+
+const el = id => document.getElementById(id);
+
+function rowHTML(slotLabel, mv, plain){
+  return '<li class="row">' +
+    '<span class="slot' + (plain ? ' plain' : '') + '">' + slotLabel + '</span>' +
+    '<span><span class="name">' + mv.n + '</span><span class="cue">' + mv.c + '</span></span>' +
+    '<span class="dose"><span class="n">' + mv.reps + '</span><span class="u">' + mv.u + '</span></span>' +
+  '</li>';
+}
+
+function render(){
+  el('sessionCode').textContent = 'Session ' + state.code;
+  el('sessionShape').textContent = state.rounds + ' rounds · ' +
+    (state.kit === 'trxkb' ? 'TRX + kettlebell' : 'bodyweight');
+
+  el('warmupList').innerHTML =
+    rowHTML('1', state.warm.W1, true) +
+    rowHTML('2', state.warm.W2, true) +
+    rowHTML('3', state.warm.W3, true);
+
+  el('blocks').innerHTML = ['A','B','C'].map(L => {
+    const m = BLOCK_META[L];
+    return '<section class="block">' +
+      '<div class="block-bar"><span class="lt">Block ' + m.letter + '</span>' +
+      '<span class="rt">' + m.theme + '</span></div>' +
+      '<ul class="rows">' +
+        rowHTML(L + '1', state.work[L + '1']) +
+        rowHTML(L + '2', state.work[L + '2']) +
+      '</ul>' +
+      '<button type="button" class="swap" data-block="' + L + '">↻ Swap block ' + L + '</button>' +
+    '</section>';
+  }).join('');
+
+  el('workNote').textContent = state.rounds + '× A1→A2 · B1→B2 · C1→C2';
+
+  document.querySelectorAll('.swap').forEach(b => {
+    b.addEventListener('click', () => { rollBlock(b.dataset.block); render(); });
   });
-  localStorage.setItem('novaxa_settings', JSON.stringify({
-    recovery, focus: state.focus, minutes: state.minutes, equipment: equipmentState
-  }));
+}
 
-  const workout = generateWorkout({
-    recovery, focus: state.focus, equipment, kettlebellKg, dumbbellKg, minutes: state.minutes
-  });
+function syncControls(){
+  document.querySelectorAll('[data-kit]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.kit === state.kit)));
+  document.querySelectorAll('[data-rounds]').forEach(b =>
+    b.setAttribute('aria-pressed', String(Number(b.dataset.rounds) === state.rounds)));
+}
 
-  startSession(workout);
-});
-
-/* ---------------- Session player ---------------- */
-let session = null;
-let stepIndex = 0;
-let remaining = 0;
-let timerHandle = null;
-let paused = false;
-let audioCtx = null;
-
-function beep(freq=880, dur=0.12, gain=0.15){
+function save(){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({kit:state.kit, rounds:state.rounds})); }
+  catch (e) { /* private window or blocked storage — settings just reset next visit */ }
+}
+function load(){
   try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.frequency.value = freq;
-    osc.type = 'sine';
-    g.gain.value = gain;
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start();
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-    osc.stop(audioCtx.currentTime + dur + 0.02);
-  } catch(e){}
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.kit === 'trxkb' || s.kit === 'bw') state.kit = s.kit;
+    if ([2,3,4].indexOf(s.rounds) !== -1) state.rounds = s.rounds;
+  } catch (e) { /* ignore unreadable settings */ }
 }
 
-function fmt(s){
-  s = Math.max(0, Math.round(s));
-  const m = Math.floor(s/60), sec = s%60;
-  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
-}
+document.querySelectorAll('[data-kit]').forEach(b => b.addEventListener('click', () => {
+  if (state.kit === b.dataset.kit) return;
+  state.kit = b.dataset.kit;
+  state.warm = {}; state.work = {};
+  rollAll(); syncControls(); render(); save();
+}));
 
-function startSession(workout){
-  session = workout;
-  stepIndex = 0;
-  paused = false;
-  document.getElementById('setupScreen').style.display = 'none';
-  document.getElementById('doneScreen').style.display = 'none';
-  document.getElementById('sessionScreen').style.display = 'block';
-  document.getElementById('sessionMeta').textContent =
-    `${session.band[0].toUpperCase()+session.band.slice(1)} recovery • ${session.rounds} rounds • ${session.exerciseCount} exercises` +
-    (session.avoidedMuscles && session.avoidedMuscles.length ? ` • resting: ${session.avoidedMuscles.join(', ')}` : '');
-  renderPlanList();
-  enterStep(0);
-  tick();
-}
+document.querySelectorAll('[data-rounds]').forEach(b => b.addEventListener('click', () => {
+  state.rounds = Number(b.dataset.rounds);
+  syncControls(); render(); save();
+}));
 
-function tierColor(step){
-  if (step.kind !== 'work') return 'rgba(245,241,232,0.4)';
-  return step.tier === 3 ? 'var(--field-cover)' : step.tier === 2 ? 'var(--accent-gold)' : 'rgba(245,241,232,0.5)';
-}
+el('rerollBtn').addEventListener('click', () => { rollAll(); render(); });
 
-function renderPlanList(){
-  const list = document.getElementById('planList');
-  list.innerHTML = '';
-  session.sequence.forEach((step, i) => {
-    const row = document.createElement('div');
-    row.className = 'plan-row';
-    row.id = 'row-' + i;
-    row.innerHTML = `<span><span class="tier-dot" style="background:${tierColor(step)}"></span>${step.name}</span><span class="tag">${fmt(step.seconds)}</span>`;
-    list.appendChild(row);
-  });
-}
-
-function enterStep(i){
-  stepIndex = i;
-  const step = session.sequence[i];
-  remaining = step.seconds;
-  document.getElementById('exName').textContent = step.name;
-  document.getElementById('exCue').textContent = step.cue || '';
-  const pill = document.getElementById('phasePill');
-  pill.textContent = step.kind === 'work' ? 'Work' : step.kind === 'rest' ? 'Rest' : step.kind === 'warmup' ? 'Warm Up' : 'Cool Down';
-  pill.className = 'phase-pill ' + step.kind;
-  const next = session.sequence[i+1];
-  document.getElementById('upNext').innerHTML = next ? `Up next: <b>${next.name}</b>` : 'Last one — finish strong';
-  document.querySelectorAll('.plan-row').forEach(r => r.classList.remove('current'));
-  const row = document.getElementById('row-' + i);
-  if (row){ row.classList.add('current'); }
-  beep(step.kind === 'work' ? 1046 : 660, 0.15);
-  updateOverall();
-}
-
-function updateOverall(){
-  const elapsedBefore = session.sequence.slice(0, stepIndex).reduce((s,x)=>s+x.seconds,0);
-  const currentElapsed = session.sequence[stepIndex].seconds - remaining;
-  const pct = ((elapsedBefore + currentElapsed) / session.grandTotal) * 100;
-  document.getElementById('overallFill').style.width = Math.min(100,pct) + '%';
-}
-
-function tick(){
-  clearInterval(timerHandle);
-  timerHandle = setInterval(() => {
-    if (paused) return;
-    remaining -= 1;
-    if (remaining <= 3 && remaining > 0) beep(440, 0.08, 0.1);
-    if (remaining <= 0){
-      if (stepIndex + 1 < session.sequence.length){
-        enterStep(stepIndex + 1);
-      } else {
-        clearInterval(timerHandle);
-        finishSession();
-        return;
-      }
-    }
-    document.getElementById('timerNum').textContent = fmt(remaining);
-    updateOverall();
-  }, 1000);
-  document.getElementById('timerNum').textContent = fmt(remaining);
-}
-
-document.getElementById('pauseBtn').addEventListener('click', (e) => {
-  paused = !paused;
-  const btn = document.getElementById('pauseBtn');
-  btn.innerHTML = paused
-    ? '<span class="material-symbols-outlined">play_arrow</span>Resume'
-    : '<span class="material-symbols-outlined">pause</span>Pause';
-});
-document.getElementById('skipBtn').addEventListener('click', () => {
-  if (stepIndex + 1 < session.sequence.length) enterStep(stepIndex + 1);
-  else finishSession();
-});
-document.getElementById('restartBtn').addEventListener('click', () => {
-  enterStep(0);
-});
-document.getElementById('backBtn').addEventListener('click', () => {
-  clearInterval(timerHandle);
-  document.getElementById('sessionScreen').style.display = 'none';
-  document.getElementById('setupScreen').style.display = 'block';
-});
-
-function finishSession(){
-  document.getElementById('sessionScreen').style.display = 'none';
-  document.getElementById('doneScreen').style.display = 'block';
-  const mins = Math.round(session.grandTotal/60);
-  document.getElementById('doneSummary').textContent =
-    `${mins} min session • ${session.rounds} rounds • ${session.exerciseCount} exercises • ${session.band} recovery`;
-  saveHistoryEntry(session.mainExercises);
-  beep(1200,0.2,0.2);
-}
-document.getElementById('doneBtn').addEventListener('click', () => {
-  document.getElementById('doneScreen').style.display = 'none';
-  document.getElementById('setupScreen').style.display = 'block';
-});
+load();
+rollAll();
+syncControls();
+render();
 </script>
 </body>
 </html>
