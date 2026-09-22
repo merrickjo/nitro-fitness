@@ -391,11 +391,26 @@ const state = { kit:'trxkb', rounds:3, warm:{}, work:{}, code:'' };
 function fits(mv, kit){ return mv.kit === 'both' || mv.kit === kit; }
 function pick(list){ return list[Math.floor(Math.random() * list.length)]; }
 
-function drawMove(pool, kit, avoidName){
+/* A draw avoids two things: repeating what this slot already showed
+   (so reroll always visibly changes), and any movement already used
+   elsewhere in the session (a few prep movements live in both the
+   warm-up and the shoulder slot). Both are preferences, not hard
+   rules — if filtering empties the pool, the slot still gets filled. */
+function drawMove(pool, kit, avoidName, used){
   const eligible = pool.filter(m => fits(m, kit));
-  const fresh = eligible.filter(m => m.n !== avoidName);
-  const mv = pick(fresh.length ? fresh : eligible);
+  const unused = eligible.filter(m => !used.has(m.n));
+  const base = unused.length ? unused : eligible;
+  const fresh = base.filter(m => m.n !== avoidName);
+  const mv = pick(fresh.length ? fresh : base);
+  used.add(mv.n);
   return { n: mv.n, c: mv.c, u: mv.u, reps: pick(mv.r) };
+}
+
+function usedNames(except){
+  const set = new Set();
+  Object.keys(state.warm).forEach(k => { if (except.indexOf(k) === -1 && state.warm[k]) set.add(state.warm[k].n); });
+  Object.keys(state.work).forEach(k => { if (except.indexOf(k) === -1 && state.work[k]) set.add(state.work[k].n); });
+  return set;
 }
 
 function makeCode(){
@@ -406,13 +421,22 @@ function makeCode(){
 }
 
 function rollAll(){
-  ['W1','W2','W3'].forEach(k => { state.warm[k] = drawMove(WARMUP[k], state.kit, state.warm[k] && state.warm[k].n); });
-  ['A1','A2','B1','B2','C1','C2'].forEach(k => { state.work[k] = drawMove(POOL[k], state.kit, state.work[k] && state.work[k].n); });
+  const used = new Set();
+  const prevWarm = state.warm, prevWork = state.work;
+  state.warm = {}; state.work = {};
+  ['W1','W2','W3'].forEach(k => {
+    state.warm[k] = drawMove(WARMUP[k], state.kit, prevWarm[k] && prevWarm[k].n, used);
+  });
+  ['A1','A2','B1','B2','C1','C2'].forEach(k => {
+    state.work[k] = drawMove(POOL[k], state.kit, prevWork[k] && prevWork[k].n, used);
+  });
   state.code = makeCode();
 }
 
 function rollBlock(letter){
-  [letter + '1', letter + '2'].forEach(k => { state.work[k] = drawMove(POOL[k], state.kit, state.work[k].n); });
+  const slots = [letter + '1', letter + '2'];
+  const used = usedNames(slots);
+  slots.forEach(k => { state.work[k] = drawMove(POOL[k], state.kit, state.work[k].n, used); });
 }
 
 /* ═══════════════════════════════════════════════════════════════
