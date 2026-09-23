@@ -21,6 +21,7 @@ img{max-width:100%}
 <title>NITRO Fitness</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="./nav-kit.css">
 <style>
 /* ──────────────────────────────────────────────────────────────
    NITRO — badminton strength circuit generator
@@ -173,6 +174,14 @@ body{
   .row{grid-template-columns:30px 1fr auto;gap:8px}
   .slot{width:30px}
 }
+/* ── bottom bar: nav-kit tokens (look only — shape lives in nav-kit.css) ── */
+:root{
+  --gn-bg:var(--paper);--gn-fg:var(--ink);--gn-border:var(--rule);--gn-border-w:2px;
+  --gn-active-bg:var(--ink);--gn-active-fg:var(--on-ink);--gn-scrim:var(--paper);
+  --gn-font:var(--f-display);--gn-size:14px;--gn-tracking:.06em;--gn-item-h:48px;
+}
+.gn-action .glyph{font-family:var(--f-data);font-weight:700}
+
 @media print{
   .controls,.swap{display:none}
   body{font-size:12pt}
@@ -181,7 +190,7 @@ body{
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap gn-clear">
 
   <header class="mast">
     <h1 class="mark">NITRO<span class="dot">◆</span></h1>
@@ -195,13 +204,6 @@ body{
 
   <section class="controls" aria-label="Session settings">
     <div>
-      <span class="ctl-label" id="lbl-kit">Kit</span>
-      <div class="seg" role="group" aria-labelledby="lbl-kit">
-        <button type="button" id="kit-trxkb" data-kit="trxkb" aria-pressed="true">TRX + KB</button>
-        <button type="button" id="kit-bw" data-kit="bw" aria-pressed="false">Bodyweight</button>
-      </div>
-    </div>
-    <div>
       <span class="ctl-label" id="lbl-rounds">Rounds</span>
       <div class="seg" role="group" aria-labelledby="lbl-rounds">
         <button type="button" id="rd-2" data-rounds="2" aria-pressed="false">2</button>
@@ -209,9 +211,6 @@ body{
         <button type="button" id="rd-4" data-rounds="4" aria-pressed="false">4</button>
       </div>
     </div>
-    <button type="button" class="reroll" id="rerollBtn">
-      <span class="glyph" aria-hidden="true">↻</span> Reroll session
-    </button>
   </section>
 
   <section class="sec" aria-labelledby="warm-title">
@@ -236,6 +235,18 @@ body{
   </footer>
 
 </div>
+
+<!-- Floating bottom bar (nav-kit v1.0.0). NITRO is one screen, so the bar
+     carries the session's two thumb actions instead of tabs: kit choice
+     and reroll. Same data-kit / #rerollBtn hooks the script already binds. -->
+<div class="gn-scrim"></div>
+<nav class="gn" aria-label="Session">
+  <button type="button" class="gn-item" id="kit-trxkb" data-kit="trxkb" aria-pressed="true" aria-label="Kit: TRX plus kettlebell">TRX+KB</button>
+  <button type="button" class="gn-item" id="kit-bw" data-kit="bw" aria-pressed="false" aria-label="Kit: bodyweight">BW</button>
+  <span class="gn-sep" aria-hidden="true"></span>
+  <button type="button" class="gn-item gn-action" id="rerollBtn"><span class="glyph" aria-hidden="true">↻</span> Reroll</button>
+</nav>
+<script src="./nav-kit.js" defer></script>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════

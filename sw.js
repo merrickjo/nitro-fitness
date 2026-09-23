@@ -11,7 +11,7 @@
              fallback stacks, so a cold offline start still renders
 */
 
-const VERSION    = 'nitro-v2';
+const VERSION    = 'nitro-v3';
 const SHELL      = 'nitro-shell-' + VERSION;
 const RUNTIME    = 'nitro-runtime-' + VERSION;
 const FONT_HOSTS = ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'];
@@ -20,6 +20,8 @@ const SHELL_URLS = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './nav-kit.css',
+  './nav-kit.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
