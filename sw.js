@@ -11,7 +11,7 @@
              fallback stacks, so a cold offline start still renders
 */
 
-const VERSION    = 'nitro-v3';
+const VERSION    = 'nitro-v4';
 const SHELL      = 'nitro-shell-' + VERSION;
 const RUNTIME    = 'nitro-runtime-' + VERSION;
 const FONT_HOSTS = ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'];
@@ -20,8 +20,18 @@ const SHELL_URLS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './nav-kit.css',
-  './nav-kit.js',
+  './carpe-kit.css',
+  './carpe-kit.js',
+  './fonts/ibm-plex-sans-latin-400-normal.woff2',
+  './fonts/ibm-plex-sans-latin-400-italic.woff2',
+  './fonts/ibm-plex-sans-latin-600-normal.woff2',
+  './fonts/ibm-plex-sans-latin-700-normal.woff2',
+  './fonts/ibm-plex-sans-condensed-latin-600-normal.woff2',
+  './fonts/ibm-plex-sans-condensed-latin-700-normal.woff2',
+  './fonts/ibm-plex-mono-latin-400-normal.woff2',
+  './fonts/ibm-plex-mono-latin-500-normal.woff2',
+  './fonts/ibm-plex-mono-latin-700-normal.woff2',
+  './fonts/literata-latin-600-normal.woff2',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
