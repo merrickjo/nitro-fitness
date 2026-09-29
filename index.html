@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="NITRO — randomized badminton-specific strength circuits for TRX + kettlebell or pure bodyweight, designed for e-ink screens.">
+<meta name="description" content="NITRO — randomized badminton-specific strength circuits for any mix of TRX, kettlebell and bodyweight, designed for e-ink screens.">
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
@@ -180,6 +180,12 @@ body{
   --gn-active-bg:var(--ink);--gn-active-fg:var(--on-ink);--gn-scrim:var(--paper);
 }
 .gn-action .glyph{font-family:var(--f-data);font-weight:700}
+/* Kit ticks: each piece of kit is its own on/off toggle. The tick glyph
+   carries the state as well as the inverted fill, so it still reads on a
+   panel that renders the fill as a light grey. */
+.gn-kit .tick{font-family:var(--f-data);font-weight:700;display:inline-block;width:1em;text-align:center}
+.gn-kit .tick::before{content:"\25A1"}
+.gn-kit[aria-pressed="true"] .tick::before{content:"\2713"}
 
 @media print{
   .controls,.swap{display:none}
@@ -236,12 +242,13 @@ body{
 </div>
 
 <!-- Floating bottom bar (carpe-kit v2.0.0). NITRO is one screen, so the bar
-     carries the session's two thumb actions instead of tabs: kit choice
-     and reroll. Same data-kit / #rerollBtn hooks the script already binds. -->
+     carries the session's thumb actions instead of tabs: three kit ticks
+     (any combination, at least one on) and reroll. -->
 <div class="gn-scrim"></div>
 <nav class="gn" aria-label="Session">
-  <button type="button" class="gn-item" id="kit-trxkb" data-kit="trxkb" aria-pressed="true" aria-label="Kit: TRX plus kettlebell">TRX+KB</button>
-  <button type="button" class="gn-item" id="kit-bw" data-kit="bw" aria-pressed="false" aria-label="Kit: bodyweight">BW</button>
+  <button type="button" class="gn-item gn-kit" data-kit="trx" aria-pressed="true" aria-label="TRX"><span class="tick" aria-hidden="true"></span>TRX</button>
+  <button type="button" class="gn-item gn-kit" data-kit="kb" aria-pressed="true" aria-label="Kettlebell"><span class="tick" aria-hidden="true"></span>KB</button>
+  <button type="button" class="gn-item gn-kit" data-kit="bw" aria-pressed="false" aria-label="Bodyweight"><span class="tick" aria-hidden="true"></span>BW</button>
   <span class="gn-sep" aria-hidden="true"></span>
   <button type="button" class="gn-item gn-action" id="rerollBtn"><span class="glyph" aria-hidden="true">↻</span> Reroll</button>
 </nav>
@@ -254,7 +261,8 @@ body{
      A1 knee-dominant / deceleration   A2 horizontal pull
      B1 hinge power                    B2 scapula + cuff
      C1 lateral / change of direction  C2 rotation / anti-rotation
-   kit: "trxkb" | "bw" | "both"
+   eq:  "trx" | "kb" | "bw" — the one piece of kit the move needs
+        "any" — warm-up prep that needs nothing and fits every mix
    r:   candidate rep values (the draw picks one)
    u:   unit label
    ═══════════════════════════════════════════════════════════════ */
@@ -263,132 +271,132 @@ const U = { SIDE:'per side', REPS:'reps', EACH:'each way', STEPS:'steps', BREATH
 
 const WARMUP = {
   W1: [ // hips + ankles
-    {n:'90/90 hip switch', kit:'both', r:[5,6,8], u:U.SIDE, c:'Opens internal and external rotation so deep lunges have somewhere to go.'},
-    {n:'Deep squat ankle rock', kit:'both', r:[8,10,12], u:U.REPS, c:'Dorsiflexion is what lets the front knee travel over a low net reach.'},
-    {n:'Cossack rock', kit:'both', r:[6,8,10], u:U.SIDE, c:'Preps the lateral hip range you live in on defensive coverage.'},
-    {n:"World's greatest stretch", kit:'both', r:[4,5,6], u:U.SIDE, c:'Hip flexor and thoracic rotation in one shape — the overhead reach position.'},
-    {n:'Hip airplane', kit:'both', r:[5,6,8], u:U.SIDE, c:'Teaches the standing leg to control rotation before you load it.'},
-    {n:'Knee circles + ankle CARs', kit:'both', r:[6,8,10], u:U.EACH, c:'Wakes up the joints that absorb every lunge landing.'}
+    {n:'90/90 hip switch', eq:'any', r:[5,6,8], u:U.SIDE, c:'Opens internal and external rotation so deep lunges have somewhere to go.'},
+    {n:'Deep squat ankle rock', eq:'any', r:[8,10,12], u:U.REPS, c:'Dorsiflexion is what lets the front knee travel over a low net reach.'},
+    {n:'Cossack rock', eq:'any', r:[6,8,10], u:U.SIDE, c:'Preps the lateral hip range you live in on defensive coverage.'},
+    {n:"World's greatest stretch", eq:'any', r:[4,5,6], u:U.SIDE, c:'Hip flexor and thoracic rotation in one shape — the overhead reach position.'},
+    {n:'Hip airplane', eq:'any', r:[5,6,8], u:U.SIDE, c:'Teaches the standing leg to control rotation before you load it.'},
+    {n:'Knee circles + ankle CARs', eq:'any', r:[6,8,10], u:U.EACH, c:'Wakes up the joints that absorb every lunge landing.'}
   ],
   W2: [ // dynamic lower
-    {n:'Bodyweight reverse lunge', kit:'both', r:[6,8,10], u:U.SIDE, c:'Rehearses the lunge-and-push-back pattern under no load.'},
-    {n:'Bodyweight lateral lunge', kit:'both', r:[6,8,10], u:U.SIDE, c:'Grooves the sideways push-off to the wide forehand.'},
-    {n:'Split-stance ankle bounce', kit:'both', r:[10,12,15], u:U.SIDE, c:'Builds the springy ankle you land split-steps on.'},
-    {n:'Skater step, no jump', kit:'both', r:[8,10,12], u:U.SIDE, c:'Grounded version of the lateral bound — direction change without impact.'},
-    {n:'Walking knee hug into lunge', kit:'both', r:[5,6,8], u:U.SIDE, c:'Length through the hip flexor, then immediately load it.'},
-    {n:'A-march into split step', kit:'both', r:[8,10,12], u:U.REPS, c:'Ties the rhythm of a split step to a loaded stance.'}
+    {n:'Bodyweight reverse lunge', eq:'any', r:[6,8,10], u:U.SIDE, c:'Rehearses the lunge-and-push-back pattern under no load.'},
+    {n:'Bodyweight lateral lunge', eq:'any', r:[6,8,10], u:U.SIDE, c:'Grooves the sideways push-off to the wide forehand.'},
+    {n:'Split-stance ankle bounce', eq:'any', r:[10,12,15], u:U.SIDE, c:'Builds the springy ankle you land split-steps on.'},
+    {n:'Skater step, no jump', eq:'any', r:[8,10,12], u:U.SIDE, c:'Grounded version of the lateral bound — direction change without impact.'},
+    {n:'Walking knee hug into lunge', eq:'any', r:[5,6,8], u:U.SIDE, c:'Length through the hip flexor, then immediately load it.'},
+    {n:'A-march into split step', eq:'any', r:[8,10,12], u:U.REPS, c:'Ties the rhythm of a split step to a loaded stance.'}
   ],
   W3: [ // shoulders + scapula
-    {n:'TRX Y-T-W pull', kit:'trxkb', r:[5,6,8], u:U.EACH, c:'Switches the scapular stabilisers on before anything goes overhead.'},
-    {n:'Kettlebell halo', kit:'trxkb', r:[5,6,8], u:U.EACH, c:'Warms the shoulder girdle through a full circle under light load.'},
-    {n:'Kettlebell around-the-world', kit:'trxkb', r:[6,8,10], u:U.EACH, c:'Grip, forearm and shoulder in one continuous path.'},
-    {n:'Prone Y-T-W', kit:'bw', r:[6,8,10], u:U.EACH, c:'Lower trap and rear delt activation with nothing but the floor.'},
-    {n:'Wall slide', kit:'both', r:[8,10,12], u:U.REPS, c:'Trains overhead reach without the ribs flaring — the clean smash position.'},
-    {n:'Scapular push-up', kit:'both', r:[10,12,15], u:U.REPS, c:'Teaches the shoulder blade to move on the ribcage, not lock to it.'},
-    {n:'Shoulder CARs', kit:'both', r:[4,5,6], u:U.EACH, c:'Full-range circle to check the racket shoulder before loading it.'}
+    {n:'TRX Y-T-W pull', eq:'trx', r:[5,6,8], u:U.EACH, c:'Switches the scapular stabilisers on before anything goes overhead.'},
+    {n:'Kettlebell halo', eq:'kb', r:[5,6,8], u:U.EACH, c:'Warms the shoulder girdle through a full circle under light load.'},
+    {n:'Kettlebell around-the-world', eq:'kb', r:[6,8,10], u:U.EACH, c:'Grip, forearm and shoulder in one continuous path.'},
+    {n:'Prone Y-T-W', eq:'bw', r:[6,8,10], u:U.EACH, c:'Lower trap and rear delt activation with nothing but the floor.'},
+    {n:'Wall slide', eq:'any', r:[8,10,12], u:U.REPS, c:'Trains overhead reach without the ribs flaring — the clean smash position.'},
+    {n:'Scapular push-up', eq:'any', r:[10,12,15], u:U.REPS, c:'Teaches the shoulder blade to move on the ribcage, not lock to it.'},
+    {n:'Shoulder CARs', eq:'any', r:[4,5,6], u:U.EACH, c:'Full-range circle to check the racket shoulder before loading it.'}
   ]
 };
 
 const POOL = {
   A1: [ // knee-dominant, lunge + deceleration
-    {n:'KB goblet reverse lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'The lunge-and-push-back the net kill demands, loaded.'},
-    {n:'KB goblet split squat', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Single-leg strength in the deep position you finish a drop shot in.'},
-    {n:'KB front-rack step-back lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Load in front forces an upright torso, like a high net reach.'},
-    {n:'KB goblet squat, 3-second lower', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Eccentric strength — the brake you need when you land off a jump.'},
-    {n:'KB goblet curtsy lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Trains the crossover step into the backhand rear corner.'},
-    {n:'TRX-assisted pistol squat', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'One-leg control for landings you only get one foot down on.'},
-    {n:'TRX lunge, rear foot in strap', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Unstable back foot makes the front hip do the whole job.'},
-    {n:'KB suitcase reverse lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'One-sided load — the trunk resists tipping while the leg works.'},
-    {n:'Reverse lunge', kit:'bw', r:[10,12,15], u:U.SIDE, c:'The base lunge pattern: step, absorb, drive back to centre.'},
-    {n:'Split squat, 2-second pause', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Owns the bottom position instead of bouncing out of it.'},
-    {n:'Bulgarian split squat', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Deepest single-leg range you can reach without gear.'},
-    {n:'Tempo squat, 3-second lower', kit:'bw', r:[10,12,15], u:U.REPS, c:'Builds the deceleration strength that saves the knee on landing.'},
-    {n:'Step-up onto a chair', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Concentric single-leg drive, the push out of a deep lunge.'},
-    {n:'Curtsy lunge', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Crossover pattern for the backhand corner scramble.'},
-    {n:'Assisted pistol squat', kit:'bw', r:[5,6,8], u:U.SIDE, c:'Hold a doorframe and own the deepest single-leg position you have.'},
-    {n:'Walking lunge', kit:'bw', r:[10,12,14], u:U.SIDE, c:'Continuous lunging under fatigue, like a long rally.'}
+    {n:'KB goblet reverse lunge', eq:'kb', r:[6,8,10], u:U.SIDE, c:'The lunge-and-push-back the net kill demands, loaded.'},
+    {n:'KB goblet split squat', eq:'kb', r:[6,8,10], u:U.SIDE, c:'Single-leg strength in the deep position you finish a drop shot in.'},
+    {n:'KB front-rack step-back lunge', eq:'kb', r:[6,8,10], u:U.SIDE, c:'Load in front forces an upright torso, like a high net reach.'},
+    {n:'KB goblet squat, 3-second lower', eq:'kb', r:[8,10,12], u:U.REPS, c:'Eccentric strength — the brake you need when you land off a jump.'},
+    {n:'KB goblet curtsy lunge', eq:'kb', r:[6,8,10], u:U.SIDE, c:'Trains the crossover step into the backhand rear corner.'},
+    {n:'TRX-assisted pistol squat', eq:'trx', r:[5,6,8], u:U.SIDE, c:'One-leg control for landings you only get one foot down on.'},
+    {n:'TRX lunge, rear foot in strap', eq:'trx', r:[6,8,10], u:U.SIDE, c:'Unstable back foot makes the front hip do the whole job.'},
+    {n:'KB suitcase reverse lunge', eq:'kb', r:[6,8,10], u:U.SIDE, c:'One-sided load — the trunk resists tipping while the leg works.'},
+    {n:'Reverse lunge', eq:'bw', r:[10,12,15], u:U.SIDE, c:'The base lunge pattern: step, absorb, drive back to centre.'},
+    {n:'Split squat, 2-second pause', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Owns the bottom position instead of bouncing out of it.'},
+    {n:'Bulgarian split squat', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Deepest single-leg range you can reach without gear.'},
+    {n:'Tempo squat, 3-second lower', eq:'bw', r:[10,12,15], u:U.REPS, c:'Builds the deceleration strength that saves the knee on landing.'},
+    {n:'Step-up onto a chair', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Concentric single-leg drive, the push out of a deep lunge.'},
+    {n:'Curtsy lunge', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Crossover pattern for the backhand corner scramble.'},
+    {n:'Assisted pistol squat', eq:'bw', r:[5,6,8], u:U.SIDE, c:'Hold a doorframe and own the deepest single-leg position you have.'},
+    {n:'Walking lunge', eq:'bw', r:[10,12,14], u:U.SIDE, c:'Continuous lunging under fatigue, like a long rally.'}
   ],
   A2: [ // horizontal pull
-    {n:'TRX row', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Mid-back and rear shoulder — the brake on every overhead swing.'},
-    {n:'TRX wide row', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Biases the rear delts that decelerate a smash.'},
-    {n:'TRX single-arm row', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Matches badminton’s one-sided pulling demand.'},
-    {n:'TRX row, feet elevated', kit:'trxkb', r:[6,8,10], u:U.REPS, c:'Same pattern, heavier — build the pull, not just maintain it.'},
-    {n:'KB bent-over row', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Loaded pull with the hinge held — back strength under position.'},
-    {n:'KB gorilla row', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Alternating pull with an anti-rotation cost on every rep.'},
-    {n:'KB high-elbow row', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Pulls into the rear delt rather than the lat — the balancing muscle.'},
-    {n:'Inverted row under a table', kit:'bw', r:[8,10,12], u:U.REPS, c:'The one real horizontal pull you can get with no kit.'},
-    {n:'Towel row on a door handle', kit:'bw', r:[10,12,15], u:U.REPS, c:'Loads the mid-back and the grip at the same time.'},
-    {n:'Reverse snow angel', kit:'bw', r:[10,12,15], u:U.REPS, c:'Rear shoulder and mid-back through full range, floor only.'},
-    {n:'Prone swimmer pull', kit:'bw', r:[10,12,15], u:U.REPS, c:'Pulls the shoulder blades down and back against gravity.'},
-    {n:'Prone W hold-and-pull', kit:'bw', r:[10,12,15], u:U.REPS, c:'Short-range rear delt work that keeps the racket shoulder honest.'}
+    {n:'TRX row', eq:'trx', r:[8,10,12], u:U.REPS, c:'Mid-back and rear shoulder — the brake on every overhead swing.'},
+    {n:'TRX wide row', eq:'trx', r:[8,10,12], u:U.REPS, c:'Biases the rear delts that decelerate a smash.'},
+    {n:'TRX single-arm row', eq:'trx', r:[6,8,10], u:U.SIDE, c:'Matches badminton’s one-sided pulling demand.'},
+    {n:'TRX row, feet elevated', eq:'trx', r:[6,8,10], u:U.REPS, c:'Same pattern, heavier — build the pull, not just maintain it.'},
+    {n:'KB bent-over row', eq:'kb', r:[8,10,12], u:U.SIDE, c:'Loaded pull with the hinge held — back strength under position.'},
+    {n:'KB gorilla row', eq:'kb', r:[6,8,10], u:U.SIDE, c:'Alternating pull with an anti-rotation cost on every rep.'},
+    {n:'KB high-elbow row', eq:'kb', r:[8,10,12], u:U.SIDE, c:'Pulls into the rear delt rather than the lat — the balancing muscle.'},
+    {n:'Inverted row under a table', eq:'bw', r:[8,10,12], u:U.REPS, c:'The one real horizontal pull you can get with no kit.'},
+    {n:'Towel row on a door handle', eq:'bw', r:[10,12,15], u:U.REPS, c:'Loads the mid-back and the grip at the same time.'},
+    {n:'Reverse snow angel', eq:'bw', r:[10,12,15], u:U.REPS, c:'Rear shoulder and mid-back through full range, floor only.'},
+    {n:'Prone swimmer pull', eq:'bw', r:[10,12,15], u:U.REPS, c:'Pulls the shoulder blades down and back against gravity.'},
+    {n:'Prone W hold-and-pull', eq:'bw', r:[10,12,15], u:U.REPS, c:'Short-range rear delt work that keeps the racket shoulder honest.'}
   ],
   B1: [ // hinge power
-    {n:'KB swing', kit:'trxkb', r:[12,15,20], u:U.REPS, c:'Hip snap — the same extension that powers a jump smash.'},
-    {n:'KB single-arm swing', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Power through one hip, like taking off from the backhand corner.'},
-    {n:'KB high pull', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Fast triple extension finishing upward, close to a jump.'},
-    {n:'KB clean', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'Explosive hinge into a catch — produce force, then absorb it.'},
-    {n:'KB snatch', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'Top-end hip power finishing overhead, the full smash chain.'},
-    {n:'KB Romanian deadlift', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Hamstring and glute strength that lets you jump again on rep twenty.'},
-    {n:'KB single-leg RDL', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'The exact balance demand of landing on one foot in the rear court.'},
-    {n:'TRX hamstring curl', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Posterior chain across the knee — landing control, not just power.'},
-    {n:'Squat jump', kit:'bw', r:[8,10,12], u:U.REPS, c:'Raw vertical output for the jump smash.'},
-    {n:'Split jump', kit:'bw', r:[6,8,10], u:U.SIDE, c:'Alternating takeoff, like scrambling out of the rear corner.'},
-    {n:'Broad jump, walk back', kit:'bw', r:[5,6,8], u:U.REPS, c:'Horizontal power — the lunge to the net starts here.'},
-    {n:'Pogo hop', kit:'bw', r:[20,25,30], u:U.REPS, c:'Ankle stiffness for repeated push-offs with no knee bend.'},
-    {n:'Single-leg glute bridge', kit:'bw', r:[10,12,15], u:U.SIDE, c:'Hip extension strength without needing load.'},
-    {n:'Nordic curl negative', kit:'bw', r:[4,5,6], u:U.REPS, c:'Hardest hamstring brake you can train — protects the landing leg.'},
-    {n:'Single-leg hinge, arms overhead', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Balance and hamstring length in the reaching position.'},
-    {n:'Tuck jump', kit:'bw', r:[6,8,10], u:U.REPS, c:'Fast ground contact — get off the floor and back on guard.'}
+    {n:'KB swing', eq:'kb', r:[12,15,20], u:U.REPS, c:'Hip snap — the same extension that powers a jump smash.'},
+    {n:'KB single-arm swing', eq:'kb', r:[8,10,12], u:U.SIDE, c:'Power through one hip, like taking off from the backhand corner.'},
+    {n:'KB high pull', eq:'kb', r:[8,10,12], u:U.REPS, c:'Fast triple extension finishing upward, close to a jump.'},
+    {n:'KB clean', eq:'kb', r:[5,6,8], u:U.SIDE, c:'Explosive hinge into a catch — produce force, then absorb it.'},
+    {n:'KB snatch', eq:'kb', r:[5,6,8], u:U.SIDE, c:'Top-end hip power finishing overhead, the full smash chain.'},
+    {n:'KB Romanian deadlift', eq:'kb', r:[8,10,12], u:U.REPS, c:'Hamstring and glute strength that lets you jump again on rep twenty.'},
+    {n:'KB single-leg RDL', eq:'kb', r:[6,8,10], u:U.SIDE, c:'The exact balance demand of landing on one foot in the rear court.'},
+    {n:'TRX hamstring curl', eq:'trx', r:[8,10,12], u:U.REPS, c:'Posterior chain across the knee — landing control, not just power.'},
+    {n:'Squat jump', eq:'bw', r:[8,10,12], u:U.REPS, c:'Raw vertical output for the jump smash.'},
+    {n:'Split jump', eq:'bw', r:[6,8,10], u:U.SIDE, c:'Alternating takeoff, like scrambling out of the rear corner.'},
+    {n:'Broad jump, walk back', eq:'bw', r:[5,6,8], u:U.REPS, c:'Horizontal power — the lunge to the net starts here.'},
+    {n:'Pogo hop', eq:'bw', r:[20,25,30], u:U.REPS, c:'Ankle stiffness for repeated push-offs with no knee bend.'},
+    {n:'Single-leg glute bridge', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Hip extension strength without needing load.'},
+    {n:'Nordic curl negative', eq:'bw', r:[4,5,6], u:U.REPS, c:'Hardest hamstring brake you can train — protects the landing leg.'},
+    {n:'Single-leg hinge, arms overhead', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Balance and hamstring length in the reaching position.'},
+    {n:'Tuck jump', eq:'bw', r:[6,8,10], u:U.REPS, c:'Fast ground contact — get off the floor and back on guard.'}
   ],
   B2: [ // scapula + rotator cuff
-    {n:'TRX Y-fly', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Lower trap and cuff — the pair that protect a smashing shoulder.'},
-    {n:'TRX face pull', kit:'trxkb', r:[10,12,15], u:U.REPS, c:'External rotation under tension, the anti-impingement rep.'},
-    {n:'TRX T-fly', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Keeps the shoulder blade set when the arm goes overhead.'},
-    {n:'TRX I-Y-T complex', kit:'trxkb', r:[5,6,8], u:U.EACH, c:'Sweeps the whole scapular range in one set.'},
-    {n:'KB bottoms-up press, half kneeling', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'Forces the cuff to stabilise a wobbling load overhead.'},
-    {n:'KB half-kneeling overhead press', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Overhead strength with no room to arch the lower back.'},
-    {n:'KB armbar', kit:'trxkb', r:[4,5,6], u:U.BREATH, c:'Loaded shoulder stability at end range, held and breathed through.'},
-    {n:'KB waiter carry', kit:'trxkb', r:[20,25,30], u:U.STEPS, c:'Overhead position under fatigue, exactly where injuries start.'},
-    {n:'Prone Y-T-W', kit:'bw', r:[8,10,12], u:U.EACH, c:'Full scapular sweep, no equipment, no excuse to skip it.'},
-    {n:'Scapular push-up', kit:'bw', r:[12,15,18], u:U.REPS, c:'Serratus control — the muscle that lets the blade rotate up.'},
-    {n:'Wall slide with lift-off', kit:'bw', r:[8,10,12], u:U.REPS, c:'Overhead reach without rib flare, then a second of pure lower trap.'},
-    {n:'Side-lying external rotation', kit:'bw', r:[12,15,18], u:U.SIDE, c:'Direct cuff work — small, boring, and the reason shoulders last.'},
-    {n:'Prone external rotation, elbows at 90', kit:'bw', r:[10,12,15], u:U.REPS, c:'Trains the cocking position of the smash under control.'},
-    {n:'Pike push-up', kit:'bw', r:[6,8,10], u:U.REPS, c:'Overhead pressing strength with bodyweight only.'}
+    {n:'TRX Y-fly', eq:'trx', r:[8,10,12], u:U.REPS, c:'Lower trap and cuff — the pair that protect a smashing shoulder.'},
+    {n:'TRX face pull', eq:'trx', r:[10,12,15], u:U.REPS, c:'External rotation under tension, the anti-impingement rep.'},
+    {n:'TRX T-fly', eq:'trx', r:[8,10,12], u:U.REPS, c:'Keeps the shoulder blade set when the arm goes overhead.'},
+    {n:'TRX I-Y-T complex', eq:'trx', r:[5,6,8], u:U.EACH, c:'Sweeps the whole scapular range in one set.'},
+    {n:'KB bottoms-up press, half kneeling', eq:'kb', r:[5,6,8], u:U.SIDE, c:'Forces the cuff to stabilise a wobbling load overhead.'},
+    {n:'KB half-kneeling overhead press', eq:'kb', r:[6,8,10], u:U.SIDE, c:'Overhead strength with no room to arch the lower back.'},
+    {n:'KB armbar', eq:'kb', r:[4,5,6], u:U.BREATH, c:'Loaded shoulder stability at end range, held and breathed through.'},
+    {n:'KB waiter carry', eq:'kb', r:[20,25,30], u:U.STEPS, c:'Overhead position under fatigue, exactly where injuries start.'},
+    {n:'Prone Y-T-W', eq:'bw', r:[8,10,12], u:U.EACH, c:'Full scapular sweep, no equipment, no excuse to skip it.'},
+    {n:'Scapular push-up', eq:'bw', r:[12,15,18], u:U.REPS, c:'Serratus control — the muscle that lets the blade rotate up.'},
+    {n:'Wall slide with lift-off', eq:'bw', r:[8,10,12], u:U.REPS, c:'Overhead reach without rib flare, then a second of pure lower trap.'},
+    {n:'Side-lying external rotation', eq:'bw', r:[12,15,18], u:U.SIDE, c:'Direct cuff work — small, boring, and the reason shoulders last.'},
+    {n:'Prone external rotation, elbows at 90', eq:'bw', r:[10,12,15], u:U.REPS, c:'Trains the cocking position of the smash under control.'},
+    {n:'Pike push-up', eq:'bw', r:[6,8,10], u:U.REPS, c:'Overhead pressing strength with bodyweight only.'}
   ],
   C1: [ // lateral / change of direction
-    {n:'KB lateral lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE, c:'Side-to-side coverage and the push back to base, loaded.'},
-    {n:'KB goblet Cossack squat', kit:'trxkb', r:[5,6,8], u:U.SIDE, c:'Deepest lateral range for a wide defensive reach.'},
-    {n:'KB lateral step-up', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Sideways drive out of a low position.'},
-    {n:'KB suitcase lateral march', kit:'trxkb', r:[10,12,15], u:U.SIDE, c:'Loaded on one side while moving sideways — the real court demand.'},
-    {n:'KB skater step, no jump', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'The lateral push-off pattern, grounded and loaded.'},
-    {n:'TRX lateral lunge', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Assisted depth so the hip can reach further than it could alone.'},
-    {n:'TRX crossing balance lunge', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Rotation and lateral load together, like chasing a cross-court drop.'},
-    {n:'Lateral lunge', kit:'bw', r:[10,12,15], u:U.SIDE, c:'The sideways step and recovery, unloaded and fast.'},
-    {n:'Cossack squat', kit:'bw', r:[6,8,10], u:U.SIDE, c:'Deep lateral range — where wide defensive digs happen.'},
-    {n:'Skater bound', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Explosive sideways push-off with a landing to control.'},
-    {n:'Lateral bound to stick', kit:'bw', r:[6,8,10], u:U.SIDE, c:'Land and hold — the ability to stop is what lets you change direction.'},
-    {n:'Lateral shuffle, three steps to stop', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Court footwork with a deliberate brake at the end.'},
-    {n:'Lateral step-over', kit:'bw', r:[12,15,18], u:U.SIDE, c:'Quick feet across the body, the mid-court adjustment step.'},
-    {n:'Lateral crawl', kit:'bw', r:[10,12,15], u:U.SIDE, c:'Hip and shoulder working sideways together under tension.'}
+    {n:'KB lateral lunge', eq:'kb', r:[6,8,10], u:U.SIDE, c:'Side-to-side coverage and the push back to base, loaded.'},
+    {n:'KB goblet Cossack squat', eq:'kb', r:[5,6,8], u:U.SIDE, c:'Deepest lateral range for a wide defensive reach.'},
+    {n:'KB lateral step-up', eq:'kb', r:[8,10,12], u:U.SIDE, c:'Sideways drive out of a low position.'},
+    {n:'KB suitcase lateral march', eq:'kb', r:[10,12,15], u:U.SIDE, c:'Loaded on one side while moving sideways — the real court demand.'},
+    {n:'KB skater step, no jump', eq:'kb', r:[8,10,12], u:U.SIDE, c:'The lateral push-off pattern, grounded and loaded.'},
+    {n:'TRX lateral lunge', eq:'trx', r:[8,10,12], u:U.SIDE, c:'Assisted depth so the hip can reach further than it could alone.'},
+    {n:'TRX crossing balance lunge', eq:'trx', r:[8,10,12], u:U.SIDE, c:'Rotation and lateral load together, like chasing a cross-court drop.'},
+    {n:'Lateral lunge', eq:'bw', r:[10,12,15], u:U.SIDE, c:'The sideways step and recovery, unloaded and fast.'},
+    {n:'Cossack squat', eq:'bw', r:[6,8,10], u:U.SIDE, c:'Deep lateral range — where wide defensive digs happen.'},
+    {n:'Skater bound', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Explosive sideways push-off with a landing to control.'},
+    {n:'Lateral bound to stick', eq:'bw', r:[6,8,10], u:U.SIDE, c:'Land and hold — the ability to stop is what lets you change direction.'},
+    {n:'Lateral shuffle, three steps to stop', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Court footwork with a deliberate brake at the end.'},
+    {n:'Lateral step-over', eq:'bw', r:[12,15,18], u:U.SIDE, c:'Quick feet across the body, the mid-court adjustment step.'},
+    {n:'Lateral crawl', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Hip and shoulder working sideways together under tension.'}
   ],
   C2: [ // rotation / anti-rotation
-    {n:'KB half-kneeling woodchop', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Rotational core that carries hip power into the racket head.'},
-    {n:'KB half-kneeling reverse chop', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Low-to-high line of an underarm clear from the net.'},
-    {n:'KB windmill', kit:'trxkb', r:[4,5,6], u:U.SIDE, c:'Rotation and overhead stability in the same rep.'},
-    {n:'KB suitcase carry', kit:'trxkb', r:[20,25,30], u:U.STEPS, c:'Resists side bend, the same cost as a one-handed stretch reach.'},
-    {n:'KB Russian twist', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Loaded trunk rotation through a controlled arc.'},
-    {n:'TRX Pallof press', kit:'trxkb', r:[8,10,12], u:U.SIDE, c:'Anti-rotation — stops the trunk leaking the power the hips made.'},
-    {n:'TRX body saw', kit:'trxkb', r:[8,10,12], u:U.REPS, c:'Anti-extension for the arched position a jump smash puts you in.'},
-    {n:'TRX fallout', kit:'trxkb', r:[6,8,10], u:U.REPS, c:'Protects the lower back when the arm reaches overhead and behind.'},
-    {n:'Half-kneeling anti-rotation reach', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Holds the trunk still while the arm travels — the transfer test.'},
-    {n:'Dead bug', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Ribs down, back flat, limbs moving — the base of every rotation.'},
-    {n:'Side plank with top-leg lift', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Lateral trunk and hip, the anti-side-bend of a wide lunge.'},
-    {n:'Side plank thread the needle', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Rotation through a braced trunk instead of a loose one.'},
-    {n:'Hollow body rock', kit:'bw', r:[12,15,20], u:U.REPS, c:'Anti-extension endurance for the overhead position.'},
-    {n:'Bird dog with a 2-second hold', kit:'bw', r:[8,10,12], u:U.SIDE, c:'Opposite limbs, still spine — the pattern behind every stroke.'},
-    {n:'Plank shoulder tap', kit:'bw', r:[10,12,15], u:U.SIDE, c:'Anti-rotation under an unstable base.'},
-    {n:'Slow bicycle crunch', kit:'bw', r:[10,12,15], u:U.SIDE, c:'Rotation with the hips involved, not just the ribs.'}
+    {n:'KB half-kneeling woodchop', eq:'kb', r:[8,10,12], u:U.SIDE, c:'Rotational core that carries hip power into the racket head.'},
+    {n:'KB half-kneeling reverse chop', eq:'kb', r:[8,10,12], u:U.SIDE, c:'Low-to-high line of an underarm clear from the net.'},
+    {n:'KB windmill', eq:'kb', r:[4,5,6], u:U.SIDE, c:'Rotation and overhead stability in the same rep.'},
+    {n:'KB suitcase carry', eq:'kb', r:[20,25,30], u:U.STEPS, c:'Resists side bend, the same cost as a one-handed stretch reach.'},
+    {n:'KB Russian twist', eq:'kb', r:[8,10,12], u:U.SIDE, c:'Loaded trunk rotation through a controlled arc.'},
+    {n:'TRX Pallof press', eq:'trx', r:[8,10,12], u:U.SIDE, c:'Anti-rotation — stops the trunk leaking the power the hips made.'},
+    {n:'TRX body saw', eq:'trx', r:[8,10,12], u:U.REPS, c:'Anti-extension for the arched position a jump smash puts you in.'},
+    {n:'TRX fallout', eq:'trx', r:[6,8,10], u:U.REPS, c:'Protects the lower back when the arm reaches overhead and behind.'},
+    {n:'Half-kneeling anti-rotation reach', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Holds the trunk still while the arm travels — the transfer test.'},
+    {n:'Dead bug', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Ribs down, back flat, limbs moving — the base of every rotation.'},
+    {n:'Side plank with top-leg lift', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Lateral trunk and hip, the anti-side-bend of a wide lunge.'},
+    {n:'Side plank thread the needle', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Rotation through a braced trunk instead of a loose one.'},
+    {n:'Hollow body rock', eq:'bw', r:[12,15,20], u:U.REPS, c:'Anti-extension endurance for the overhead position.'},
+    {n:'Bird dog with a 2-second hold', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Opposite limbs, still spine — the pattern behind every stroke.'},
+    {n:'Plank shoulder tap', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Anti-rotation under an unstable base.'},
+    {n:'Slow bicycle crunch', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Rotation with the hips involved, not just the ribs.'}
   ]
 };
 
@@ -402,11 +410,24 @@ const BLOCK_META = {
    STATE + DRAW
    ═══════════════════════════════════════════════════════════════ */
 
-const STORE_KEY = 'nitro.settings.v1';
-const state = { kit:'trxkb', rounds:3, warm:{}, work:{}, code:'' };
+const STORE_KEY = 'nitro.settings.v2';
+const OLD_STORE_KEY = 'nitro.settings.v1';
+const KIT_ORDER = ['trx','kb','bw'];
+const KIT_NAME = { trx:'TRX', kb:'KB', bw:'BW' };
+const state = { kit:['trx','kb'], rounds:3, warm:{}, work:{}, code:'' };
 
-function fits(mv, kit){ return mv.kit === 'both' || mv.kit === kit; }
+function fits(mv, kit){ return mv.eq === 'any' || kit.indexOf(mv.eq) !== -1; }
 function pick(list){ return list[Math.floor(Math.random() * list.length)]; }
+
+/* Kettlebell and bodyweight entries outnumber TRX in most slots, so a flat
+   pick would bury TRX whenever it is mixed in. Pick a piece of kit first
+   (evenly across the ticked ones that still have a candidate), then a move
+   within it — every ticked box gets a fair share of the session. */
+function pickBalanced(list){
+  const groups = {};
+  list.forEach(m => { (groups[m.eq] = groups[m.eq] || []).push(m); });
+  return pick(groups[pick(Object.keys(groups))]);
+}
 
 /* A draw avoids two things: repeating what this slot already showed
    (so reroll always visibly changes), and any movement already used
@@ -418,7 +439,7 @@ function drawMove(pool, kit, avoidName, used){
   const unused = eligible.filter(m => !used.has(m.n));
   const base = unused.length ? unused : eligible;
   const fresh = base.filter(m => m.n !== avoidName);
-  const mv = pick(fresh.length ? fresh : base);
+  const mv = pickBalanced(fresh.length ? fresh : base);
   used.add(mv.n);
   return { n: mv.n, c: mv.c, u: mv.u, reps: pick(mv.r) };
 }
@@ -473,7 +494,7 @@ function rowHTML(slotLabel, mv, plain){
 function render(){
   el('sessionCode').textContent = 'Session ' + state.code;
   el('sessionShape').textContent = state.rounds + ' rounds · ' +
-    (state.kit === 'trxkb' ? 'TRX + kettlebell' : 'bodyweight');
+    state.kit.map(k => KIT_NAME[k]).join(' + ');
 
   el('warmupList').innerHTML =
     rowHTML('1', state.warm.W1, true) +
@@ -502,7 +523,7 @@ function render(){
 
 function syncControls(){
   document.querySelectorAll('[data-kit]').forEach(b =>
-    b.setAttribute('aria-pressed', String(b.dataset.kit === state.kit)));
+    b.setAttribute('aria-pressed', String(state.kit.indexOf(b.dataset.kit) !== -1)));
   document.querySelectorAll('[data-rounds]').forEach(b =>
     b.setAttribute('aria-pressed', String(Number(b.dataset.rounds) === state.rounds)));
 }
@@ -513,17 +534,27 @@ function save(){
 }
 function load(){
   try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return;
-    const s = JSON.parse(raw);
-    if (s.kit === 'trxkb' || s.kit === 'bw') state.kit = s.kit;
+    let raw = localStorage.getItem(STORE_KEY);
+    let s = raw ? JSON.parse(raw) : null;
+    if (!s) { // carry over the old two-mode setting once
+      raw = localStorage.getItem(OLD_STORE_KEY);
+      if (!raw) return;
+      s = JSON.parse(raw);
+      s.kit = s.kit === 'bw' ? ['bw'] : ['trx','kb'];
+    }
+    if (Array.isArray(s.kit)) {
+      const k = KIT_ORDER.filter(x => s.kit.indexOf(x) !== -1);
+      if (k.length) state.kit = k;
+    }
     if ([2,3,4].indexOf(s.rounds) !== -1) state.rounds = s.rounds;
   } catch (e) { /* ignore unreadable settings */ }
 }
 
 document.querySelectorAll('[data-kit]').forEach(b => b.addEventListener('click', () => {
-  if (state.kit === b.dataset.kit) return;
-  state.kit = b.dataset.kit;
+  const k = b.dataset.kit;
+  const on = state.kit.indexOf(k) !== -1;
+  if (on && state.kit.length === 1) return; // at least one piece of kit stays ticked
+  state.kit = KIT_ORDER.filter(x => x === k ? !on : state.kit.indexOf(x) !== -1);
   state.warm = {}; state.work = {};
   rollAll(); syncControls(); render(); save();
 }));

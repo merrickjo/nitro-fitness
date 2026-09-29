@@ -21,12 +21,17 @@ Every movement in the library earns its place by feeding one of six badminton de
 
 Reroll redraws all six slots, all three warm-up movements, and the rep counts. Each block also has its own swap button if only one pair needs changing.
 
-## Kit modes
+## Kit
 
-- **TRX + kettlebell** — the full library, nothing that needs a rack, bench, or barbell.
-- **Bodyweight** — every slot has real bodyweight entries, including honest horizontal-pull options (inverted row under a table, towel row on a door handle, prone swimmer pulls) rather than pretending the pull slot can be skipped.
+Three tick boxes in the bottom bar — **TRX**, **KB**, **BW** — in any combination (at least one stays ticked). Every slot draws only from the ticked kit, so TRX + BW gives a session of TRX and bodyweight moves, all three gives a mix of everything.
 
-The two pools never mix. Switching kit redraws the whole session.
+- Each move needs exactly one piece of kit, so any combination is doable.
+- The draw picks a piece of kit first, then a move, so each ticked box gets a fair share even though KB and BW have more entries than TRX.
+- Bodyweight entries include honest horizontal-pull options (inverted row under a table, towel row on a door handle, prone swimmer pulls) rather than pretending the pull slot can be skipped.
+- Warm-up prep that needs nothing (`eq:'any'`) shows up whatever is ticked.
+- TRX-only is thin in hinge power (B1): the TRX hamstring curl is the only entry there.
+
+Changing a tick redraws the whole session.
 
 ## Built for e-ink
 
@@ -92,11 +97,11 @@ Or serve it on GitHub Pages: Settings → Pages → Deploy from a branch → `ma
 Edit the `POOL` and `WARMUP` objects near the top of the script block. Each entry:
 
 ```js
-{ n:'KB lateral lunge', kit:'trxkb', r:[6,8,10], u:U.SIDE,
+{ n:'KB lateral lunge', eq:'kb', r:[6,8,10], u:U.SIDE,
   c:'Side-to-side coverage and the push back to base, loaded.' }
 ```
 
-- `kit` — `'trxkb'`, `'bw'`, or `'both'`
+- `eq` — the one piece of kit it needs: `'trx'`, `'kb'`, `'bw'`, or `'any'` (warm-up prep that needs nothing)
 - `r` — candidate rep values; the draw picks one
 - `u` — a unit from the `U` map
 - `c` — one line on what it does for badminton. If you can't write that line, the movement doesn't belong in the pool.
