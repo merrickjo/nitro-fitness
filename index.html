@@ -38,6 +38,7 @@ img{max-width:100%}
   --rule:#000000;
   --on-ink:#FFFFFF;
   --hair:#000000;
+  --g:#777777;           /* far-side limbs in the move figures: lands on a clean 16-level grey */
 
   /* carpe-kit voices: Condensed commands, Sans reads, Mono annotates */
   --f-display:var(--ck-display);
@@ -54,6 +55,7 @@ img{max-width:100%}
     --rule:#FFFFFF;
     --on-ink:#000000;
     --hair:#FFFFFF;
+    --g:#999999;
   }
 }
 :root[data-theme="dark"]{
@@ -65,6 +67,7 @@ img{max-width:100%}
   --rule:#FFFFFF;
   --on-ink:#000000;
   --hair:#FFFFFF;
+  --g:#999999;
 }
 
 *,*::before,*::after{box-sizing:border-box;transition:none!important;animation:none!important}
@@ -141,6 +144,18 @@ body{
   font-variant-numeric:tabular-nums;display:block}
 .dose .u{font-family:var(--f-data);font-size:10.5px;font-weight:500;letter-spacing:.1em;
   text-transform:uppercase;display:block;margin-top:3px}
+
+/* movement figure: start → end position, drawn from one skeleton (poses.js) */
+.fig{display:block;grid-column:1 / -1;margin-top:8px;border:1px solid var(--hair);background:var(--paper)}
+.fig svg{display:block;width:100%;height:auto}
+.fig .i{stroke:var(--ink);fill:none}
+.fig .g{stroke:var(--g);fill:none}
+.fig .p{stroke:var(--paper);fill:none}
+.fig .f{fill:var(--ink)}
+.fig .pf,.fig .i.pf{fill:var(--paper)}
+.fig .f.p{fill:var(--ink);stroke:var(--paper)}
+.fig g{stroke-linecap:round;stroke-linejoin:round}
+.fig text{font:700 15px var(--f-data);fill:var(--ink);stroke:none}
 
 /* superset grouping: a block is one bordered unit, its pair joined by a spine */
 .block{border:2px solid var(--rule);margin-top:14px}
@@ -253,6 +268,7 @@ body{
   <button type="button" class="gn-item gn-action" id="rerollBtn"><span class="glyph" aria-hidden="true">↻</span> Reroll</button>
 </nav>
 <script src="./carpe-kit.js" defer></script>
+<script src="./poses.js"></script>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -483,11 +499,18 @@ function rollBlock(letter){
 
 const el = id => document.getElementById(id);
 
+/* Start and end position for the move, if poses.js has one for this exact name. */
+function figHTML(name){
+  const f = window.NITRO_POSES && window.NITRO_POSES[name];
+  return f ? '<span class="fig" role="img" aria-label="Start and end position: ' + name.replace(/"/g, '&quot;') + '">' + f + '</span>' : '';
+}
+
 function rowHTML(slotLabel, mv, plain){
   return '<li class="row">' +
     '<span class="slot' + (plain ? ' plain' : '') + '">' + slotLabel + '</span>' +
     '<span><span class="name">' + mv.n + '</span><span class="cue">' + mv.c + '</span></span>' +
     '<span class="dose"><span class="n">' + mv.reps + '</span><span class="u">' + mv.u + '</span></span>' +
+    figHTML(mv.n) +
   '</li>';
 }
 

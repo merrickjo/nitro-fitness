@@ -46,6 +46,14 @@ The interface is designed to be read on a reflective e-ink panel first and a bac
 
 Dark mode inverts to pure white-on-black and follows the system setting.
 
+## Movement figures
+
+Every set shows a start → end position card under its name, so nobody has to google the position mid-set. All 105 figures are drawn from one skeleton (fixed limb lengths, one stroke weight, black near-side limbs and a grey far side), so they read as one set: TRX straps, kettlebells, boxes, tables and walls are drawn only where the move uses them. Moves that read poorly from the side (lateral work, shoulder fly variants, prone pulls) use a front or top view, labelled where it isn't obvious.
+
+- `poses.js` holds the figures keyed by exact move name; `index.html` looks them up when a row is drawn, and a move with no entry simply shows no figure.
+- `poses/*.svg` are the same figures as standalone files.
+- `tools/pose-rig/` is the generator. Each move is a few joint targets in `m_*.py`; run `python3 final.py` to rebuild `poses.js` and the SVGs after changing one.
+
 ## Install it
 
 NITRO is a PWA — it installs to the home screen and runs with no network, which is the point on an e-ink phone in a gym.
@@ -76,6 +84,7 @@ Vanilla HTML, CSS, and JavaScript. No build step, no framework, no backend. `loc
 ```
 index.html              the whole app — markup, styles, movement library, logic
 manifest.webmanifest    PWA metadata (name, icons, standalone display)
+poses.js                movement figures, keyed by move name
 sw.js                   service worker: precached shell, offline-first
 icons/                  192 / 512 / maskable-512 / apple-touch / favicon
 ```
