@@ -93,6 +93,22 @@ def figure(p, tag=""):
             j = J[jn] if isinstance(jn, str) else jn; c = pol(j, ang, r+3)
             front_.append(f'<circle cx="{c[0]:.0f}" cy="{c[1]:.0f}" r="{r}" class="f p" stroke-width="2"/>')
             front_.append(f'<circle cx="{j[0]:.0f}" cy="{j[1]:.0f}" r="5" class="pf i" stroke-width="3"/>')
+        elif kind == "db":       # dumbbell held in a hand: handle along `ang`, a head at each end
+            _, jn, ang = g[:3]
+            j = J[jn] if isinstance(jn, str) else jn; a, b = pol(j, ang, 10), pol(j, ang+180, 10)
+            front_.append(f'<path d="{fmt([a, b])}" class="p" stroke-width="8"/><path d="{fmt([a, b])}" class="i" stroke-width="4"/>')
+            for c in (a, b): front_.append(f'<circle cx="{c[0]:.0f}" cy="{c[1]:.0f}" r="6" class="f p" stroke-width="2"/>')
+        elif kind in ("rod", "pad"):   # machine frame / lever (thin) or upholstered pad (thick)
+            _, a, b = g[:3]; w = g[3] if len(g) > 3 else (4 if kind == "rod" else 8)
+            a = J[a] if isinstance(a, str) else a; b = J[b] if isinstance(b, str) else b
+            back.append(f'<path d="{fmt([a, b])}" class="i" stroke-width="{w}"/>')
+        elif kind == "bench":    # flat bench seen from the side
+            _, x1, x2, h = g
+            back += [f'<path d="M{x1},{GR-h+4} L{x2},{GR-h+4}" class="i" stroke-width="8"/>',
+                     f'<path d="M{x1+8},{GR-h+4} L{x1+8},{GR} M{x2-8},{GR-h+4} L{x2-8},{GR}" class="i" stroke-width="4"/>']
+        elif kind == "pulley":   # cable pulley / bar end: small open ring
+            _, a = g[:2]; a = J[a] if isinstance(a, str) else a
+            (front_ if len(g) > 2 else back).append(f'<circle cx="{a[0]:.0f}" cy="{a[1]:.0f}" r="5" class="i pf" stroke-width="3"/>')
         elif kind == "label":
             _, x, y, t = g
             front_.append(f'<text x="{x}" y="{y}" stroke="none" style="font-size:11px;letter-spacing:.08em">{t}</text>')

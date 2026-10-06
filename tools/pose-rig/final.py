@@ -5,7 +5,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 import build, rig
 from reg import MOVES
-build.load(['m_a1', 'm_a2', 'm_b1', 'm_b2', 'm_c1', 'm_c2', 'm_w'])
+build.load(['m_a1', 'm_a2', 'm_b1', 'm_b2', 'm_c1', 'm_c2', 'm_w', 'm_gym'])
 os.makedirs(os.path.join(ROOT, 'poses'), exist_ok=True)
 rig.WARN.clear()
 js = {}

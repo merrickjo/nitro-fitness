@@ -33,6 +33,26 @@ Three tick boxes in the bottom bar — **TRX**, **KB**, **BW** — in any combin
 
 Changing a tick redraws the whole session.
 
+### Gym
+
+A fourth tick, **GYM**, is a mode of its own: tick it and the home kit switches off, and all three blocks are drawn from the gym floor. Tick TRX, KB or BW again to go back.
+
+The gym library only uses equipment identified from photos of the actual gym:
+
+| Equipment | Used for |
+|-----------|----------|
+| Seated row machine (pin-loaded) | A2 pull, two-arm and single-arm |
+| Cable station — high lat bar plus a height-adjustable pulley | A2 row and pulldown, B1 pull-through, B2 face pull, C2 chops and Pallof press |
+| 45° back extension bench | B1 hinge, two-leg and single-leg |
+| Pec fly / rear delt machine (pin-loaded) | B2 rear delt fly |
+| Shoulder press machine (pin-loaded) | B2 overhead press |
+| Rotary torso machine (pin-loaded) | C2 rotation |
+| Dumbbells and adjustable benches | A1 lunges, squats and step-ups, C1 lateral work, rows, RDLs, presses, cuff work |
+
+Left out on purpose: the preacher curl bench, the chest side of the fly machine and the cardio machines (no badminton slot to put them in), and the barbell rack and older selectorised machines that were only visible in the background of the photos.
+
+Gym sessions stay reps-only. Load is whatever makes the last two reps hard but clean, so two people can run the same session at different pins and dumbbells. The warm-up stays equipment-free.
+
 ## Built for e-ink
 
 The interface is designed to be read on a reflective e-ink panel first and a backlit screen second:
@@ -48,7 +68,7 @@ Dark mode inverts to pure white-on-black and follows the system setting.
 
 ## Movement figures
 
-Every set shows a start → end position card under its name, so nobody has to google the position mid-set. All 105 figures are drawn from one skeleton (fixed limb lengths, one stroke weight, black near-side limbs and a grey far side), so they read as one set: TRX straps, kettlebells, boxes, tables and walls are drawn only where the move uses them. Moves that read poorly from the side (lateral work, shoulder fly variants, prone pulls) use a front or top view, labelled where it isn't obvious.
+Every set shows a start → end position card under its name, so nobody has to google the position mid-set. All 139 figures are drawn from one skeleton (fixed limb lengths, one stroke weight, black near-side limbs and a grey far side), so they read as one set: TRX straps, kettlebells, dumbbells, benches, cables, machine pads, boxes, tables and walls are drawn only where the move uses them. Moves that read poorly from the side (lateral work, shoulder fly variants, prone pulls) use a front or top view, labelled where it isn't obvious.
 
 - `poses.js` holds the figures keyed by exact move name; `index.html` looks them up when a row is drawn, and a move with no entry simply shows no figure.
 - `poses/*.svg` are the same figures as standalone files.

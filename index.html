@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="NITRO — randomized badminton-specific strength circuits for any mix of TRX, kettlebell and bodyweight, designed for e-ink screens.">
+<meta name="description" content="NITRO — randomized badminton-specific strength circuits for any mix of TRX, kettlebell and bodyweight, or a full gym-floor session, designed for e-ink screens.">
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
@@ -251,6 +251,7 @@ body{
 
   <footer class="foot">
     <p>Rest as needed between pairs. Quality of position beats rep count.</p>
+    <p id="gymNote" hidden>Gym: reps only, load is yours — set the pin or pick the dumbbells so the last two reps are hard but clean. Two people can run the same session at different weights.</p>
     <p>Every movement here feeds a badminton pattern: lunge and recover, jump and land, rotate, or keep the racket shoulder healthy.</p>
   </footer>
 
@@ -258,12 +259,14 @@ body{
 
 <!-- Floating bottom bar (carpe-kit v2.0.0). NITRO is one screen, so the bar
      carries the session's thumb actions instead of tabs: three kit ticks
-     (any combination, at least one on) and reroll. -->
+     (any combination), a Gym tick that takes over the whole session, and
+     reroll. At least one tick stays on. -->
 <div class="gn-scrim"></div>
 <nav class="gn" aria-label="Session">
   <button type="button" class="gn-item gn-kit" data-kit="trx" aria-pressed="true" aria-label="TRX"><span class="tick" aria-hidden="true"></span>TRX</button>
   <button type="button" class="gn-item gn-kit" data-kit="kb" aria-pressed="true" aria-label="Kettlebell"><span class="tick" aria-hidden="true"></span>KB</button>
   <button type="button" class="gn-item gn-kit" data-kit="bw" aria-pressed="false" aria-label="Bodyweight"><span class="tick" aria-hidden="true"></span>BW</button>
+  <button type="button" class="gn-item gn-kit" data-kit="gym" aria-pressed="false" aria-label="Gym"><span class="tick" aria-hidden="true"></span>Gym</button>
   <span class="gn-sep" aria-hidden="true"></span>
   <button type="button" class="gn-item gn-action" id="rerollBtn"><span class="glyph" aria-hidden="true">↻</span> Reroll</button>
 </nav>
@@ -278,6 +281,9 @@ body{
      B1 hinge power                    B2 scapula + cuff
      C1 lateral / change of direction  C2 rotation / anti-rotation
    eq:  "trx" | "kb" | "bw" — the one piece of kit the move needs
+        "gym" — gym-floor equipment (pin-loaded machines, the cable
+                station, dumbbells, benches). Gym is a mode of its own:
+                ticking it fills all three blocks from the gym floor.
         "any" — warm-up prep that needs nothing and fits every mix
    r:   candidate rep values (the draw picks one)
    u:   unit label
@@ -330,7 +336,13 @@ const POOL = {
     {n:'Step-up onto a chair', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Concentric single-leg drive, the push out of a deep lunge.'},
     {n:'Curtsy lunge', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Crossover pattern for the backhand corner scramble.'},
     {n:'Assisted pistol squat', eq:'bw', r:[5,6,8], u:U.SIDE, c:'Hold a doorframe and own the deepest single-leg position you have.'},
-    {n:'Walking lunge', eq:'bw', r:[10,12,14], u:U.SIDE, c:'Continuous lunging under fatigue, like a long rally.'}
+    {n:'Walking lunge', eq:'bw', r:[10,12,14], u:U.SIDE, c:'Continuous lunging under fatigue, like a long rally.'},
+    {n:'DB goblet reverse lunge', eq:'gym', r:[6,8,10], u:U.SIDE, c:'Dumbbell at the chest. The lunge-and-push-back the net kill demands, loaded.'},
+    {n:'DB split squat', eq:'gym', r:[6,8,10], u:U.SIDE, c:'Dumbbell in each hand. Strength in the deep position you finish a drop shot in.'},
+    {n:'DB Bulgarian split squat, rear foot on bench', eq:'gym', r:[6,8,10], u:U.SIDE, c:'Back foot on the bench so the front hip does the whole job.'},
+    {n:'DB goblet squat, 3-second lower', eq:'gym', r:[8,10,12], u:U.REPS, c:'Eccentric strength — the brake you need when you land off a jump.'},
+    {n:'DB step-up onto bench', eq:'gym', r:[6,8,10], u:U.SIDE, c:'Single-leg drive, the push out of a deep lunge. Step down slowly.'},
+    {n:'DB walking lunge', eq:'gym', r:[8,10,12], u:U.SIDE, c:'Continuous lunging under load, like a long rally.'}
   ],
   A2: [ // horizontal pull
     {n:'TRX row', eq:'trx', r:[8,10,12], u:U.REPS, c:'Mid-back and rear shoulder — the brake on every overhead swing.'},
@@ -344,7 +356,13 @@ const POOL = {
     {n:'Towel row on a door handle', eq:'bw', r:[10,12,15], u:U.REPS, c:'Loads the mid-back and the grip at the same time.'},
     {n:'Reverse snow angel', eq:'bw', r:[10,12,15], u:U.REPS, c:'Rear shoulder and mid-back through full range, floor only.'},
     {n:'Prone swimmer pull', eq:'bw', r:[10,12,15], u:U.REPS, c:'Pulls the shoulder blades down and back against gravity.'},
-    {n:'Prone W hold-and-pull', eq:'bw', r:[10,12,15], u:U.REPS, c:'Short-range rear delt work that keeps the racket shoulder honest.'}
+    {n:'Prone W hold-and-pull', eq:'bw', r:[10,12,15], u:U.REPS, c:'Short-range rear delt work that keeps the racket shoulder honest.'},
+    {n:'Seated row machine', eq:'gym', r:[8,10,12], u:U.REPS, c:'Chest on the pad, pull the elbows back. The brake on every overhead swing.'},
+    {n:'Seated row machine, single arm', eq:'gym', r:[8,10,12], u:U.SIDE, c:'One handle at a time — matches badminton’s one-sided pulling demand.'},
+    {n:'Standing cable row', eq:'gym', r:[8,10,12], u:U.REPS, c:'Pulley at chest height. The trunk has to hold still while the back pulls.'},
+    {n:'Cable lat pulldown, kneeling', eq:'gym', r:[8,10,12], u:U.REPS, c:'Kneel under the high bar, pull to the collarbone. Lats power the smash and the clear.'},
+    {n:'DB one-arm row, hand on bench', eq:'gym', r:[8,10,12], u:U.SIDE, c:'Loaded pull with the hinge held — back strength under position.'},
+    {n:'Chest-supported DB row, incline bench', eq:'gym', r:[8,10,12], u:U.REPS, c:'Chest on the incline pad so the mid-back works and the lower back rests.'}
   ],
   B1: [ // hinge power
     {n:'KB swing', eq:'kb', r:[12,15,20], u:U.REPS, c:'Hip snap — the same extension that powers a jump smash.'},
@@ -362,7 +380,13 @@ const POOL = {
     {n:'Single-leg glute bridge', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Hip extension strength without needing load.'},
     {n:'Nordic curl negative', eq:'bw', r:[4,5,6], u:U.REPS, c:'Hardest hamstring brake you can train — protects the landing leg.'},
     {n:'Single-leg hinge, arms overhead', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Balance and hamstring length in the reaching position.'},
-    {n:'Tuck jump', eq:'bw', r:[6,8,10], u:U.REPS, c:'Fast ground contact — get off the floor and back on guard.'}
+    {n:'Tuck jump', eq:'bw', r:[6,8,10], u:U.REPS, c:'Fast ground contact — get off the floor and back on guard.'},
+    {n:'45° back extension', eq:'gym', r:[10,12,15], u:U.REPS, c:'Hinge at the hip, not the lower back. Glutes and hamstrings that let you jump again late in a rally.'},
+    {n:'45° back extension, single leg', eq:'gym', r:[6,8,10], u:U.SIDE, c:'One ankle under the roller — the landing leg has to do it alone.'},
+    {n:'DB Romanian deadlift', eq:'gym', r:[8,10,12], u:U.REPS, c:'Hamstring and glute strength behind every push-off.'},
+    {n:'DB single-leg RDL', eq:'gym', r:[6,8,10], u:U.SIDE, c:'The exact balance demand of landing on one foot in the rear court.'},
+    {n:'Cable pull-through', eq:'gym', r:[10,12,15], u:U.REPS, c:'Low pulley behind you, rope between the legs. Snap the hips through like a jump take-off.'},
+    {n:'DB squat jump', eq:'gym', r:[5,6,8], u:U.REPS, c:'Light dumbbells only. Vertical power for the jump smash — land soft.'}
   ],
   B2: [ // scapula + rotator cuff
     {n:'TRX Y-fly', eq:'trx', r:[8,10,12], u:U.REPS, c:'Lower trap and cuff — the pair that protect a smashing shoulder.'},
@@ -378,7 +402,13 @@ const POOL = {
     {n:'Wall slide with lift-off', eq:'bw', r:[8,10,12], u:U.REPS, c:'Overhead reach without rib flare, then a second of pure lower trap.'},
     {n:'Side-lying external rotation', eq:'bw', r:[12,15,18], u:U.SIDE, c:'Direct cuff work — small, boring, and the reason shoulders last.'},
     {n:'Prone external rotation, elbows at 90', eq:'bw', r:[10,12,15], u:U.REPS, c:'Trains the cocking position of the smash under control.'},
-    {n:'Pike push-up', eq:'bw', r:[6,8,10], u:U.REPS, c:'Overhead pressing strength with bodyweight only.'}
+    {n:'Pike push-up', eq:'bw', r:[6,8,10], u:U.REPS, c:'Overhead pressing strength with bodyweight only.'},
+    {n:'Rear delt fly machine', eq:'gym', r:[10,12,15], u:U.REPS, c:'Face the pad on the fly machine and open the arms back. The muscle that decelerates a smash.'},
+    {n:'Cable face pull', eq:'gym', r:[10,12,15], u:U.REPS, c:'Pulley at face height, elbows high. External rotation under tension, the anti-impingement rep.'},
+    {n:'Side-lying DB external rotation, on bench', eq:'gym', r:[10,12,15], u:U.SIDE, c:'Lightest dumbbell on the rack. Direct cuff work — the reason shoulders last.'},
+    {n:'Shoulder press machine', eq:'gym', r:[8,10,12], u:U.REPS, c:'Overhead strength on a fixed path. Stop short of a pinch at the top.'},
+    {n:'Half-kneeling DB overhead press', eq:'gym', r:[6,8,10], u:U.SIDE, c:'Overhead strength with no room to arch the lower back.'},
+    {n:'Prone DB Y-raise, incline bench', eq:'gym', r:[8,10,12], u:U.REPS, c:'Chest on the incline pad, light dumbbells. Lower trap — keeps the blade set when the arm goes overhead.'}
   ],
   C1: [ // lateral / change of direction
     {n:'KB lateral lunge', eq:'kb', r:[6,8,10], u:U.SIDE, c:'Side-to-side coverage and the push back to base, loaded.'},
@@ -394,7 +424,12 @@ const POOL = {
     {n:'Lateral bound to stick', eq:'bw', r:[6,8,10], u:U.SIDE, c:'Land and hold — the ability to stop is what lets you change direction.'},
     {n:'Lateral shuffle, three steps to stop', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Court footwork with a deliberate brake at the end.'},
     {n:'Lateral step-over', eq:'bw', r:[12,15,18], u:U.SIDE, c:'Quick feet across the body, the mid-court adjustment step.'},
-    {n:'Lateral crawl', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Hip and shoulder working sideways together under tension.'}
+    {n:'Lateral crawl', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Hip and shoulder working sideways together under tension.'},
+    {n:'DB lateral lunge', eq:'gym', r:[6,8,10], u:U.SIDE, c:'Side-to-side coverage and the push back to base, loaded.'},
+    {n:'DB goblet Cossack squat', eq:'gym', r:[5,6,8], u:U.SIDE, c:'Deepest lateral range for a wide defensive reach.'},
+    {n:'DB lateral step-up onto bench', eq:'gym', r:[8,10,12], u:U.SIDE, c:'Stand side-on to the bench. Sideways drive out of a low position.'},
+    {n:'DB suitcase lateral march', eq:'gym', r:[10,12,15], u:U.SIDE, c:'Loaded on one side while moving sideways — the real court demand.'},
+    {n:'DB skater step, no jump', eq:'gym', r:[8,10,12], u:U.SIDE, c:'The lateral push-off pattern, grounded and loaded.'}
   ],
   C2: [ // rotation / anti-rotation
     {n:'KB half-kneeling woodchop', eq:'kb', r:[8,10,12], u:U.SIDE, c:'Rotational core that carries hip power into the racket head.'},
@@ -412,7 +447,12 @@ const POOL = {
     {n:'Hollow body rock', eq:'bw', r:[12,15,20], u:U.REPS, c:'Anti-extension endurance for the overhead position.'},
     {n:'Bird dog with a 2-second hold', eq:'bw', r:[8,10,12], u:U.SIDE, c:'Opposite limbs, still spine — the pattern behind every stroke.'},
     {n:'Plank shoulder tap', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Anti-rotation under an unstable base.'},
-    {n:'Slow bicycle crunch', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Rotation with the hips involved, not just the ribs.'}
+    {n:'Slow bicycle crunch', eq:'bw', r:[10,12,15], u:U.SIDE, c:'Rotation with the hips involved, not just the ribs.'},
+    {n:'Rotary torso machine', eq:'gym', r:[8,10,12], u:U.SIDE, c:'Light pin, slow turn, ribs stay tall. Rotation that carries hip power into the racket head.'},
+    {n:'Cable woodchop, high to low', eq:'gym', r:[8,10,12], u:U.SIDE, c:'Pulley high. The diagonal line of a smash, driven from the hips.'},
+    {n:'Cable reverse chop, low to high', eq:'gym', r:[8,10,12], u:U.SIDE, c:'Pulley low. The low-to-high line of an underarm clear from the net.'},
+    {n:'Cable Pallof press', eq:'gym', r:[8,10,12], u:U.SIDE, c:'Side-on to the pulley, press straight out. Stops the trunk leaking the power the hips made.'},
+    {n:'DB suitcase carry', eq:'gym', r:[20,25,30], u:U.STEPS, c:'Resists side bend, the same cost as a one-handed stretch reach.'}
   ]
 };
 
@@ -428,8 +468,14 @@ const BLOCK_META = {
 
 const STORE_KEY = 'nitro.settings.v2';
 const OLD_STORE_KEY = 'nitro.settings.v1';
-const KIT_ORDER = ['trx','kb','bw'];
-const KIT_NAME = { trx:'TRX', kb:'KB', bw:'BW' };
+const KIT_ORDER = ['trx','kb','bw','gym'];
+const KIT_NAME = { trx:'TRX', kb:'KB', bw:'BW', gym:'GYM' };
+/* Gym is exclusive: with it ticked, every block is drawn from the gym floor,
+   so it never shares a session with the home kit. */
+function normKit(list){
+  const k = KIT_ORDER.filter(x => list.indexOf(x) !== -1);
+  return k.indexOf('gym') !== -1 ? ['gym'] : k;
+}
 const state = { kit:['trx','kb'], rounds:3, warm:{}, work:{}, code:'' };
 
 function fits(mv, kit){ return mv.eq === 'any' || kit.indexOf(mv.eq) !== -1; }
@@ -537,6 +583,7 @@ function render(){
     '</section>';
   }).join('');
 
+  el('gymNote').hidden = state.kit[0] !== 'gym';
   el('workNote').textContent = state.rounds + '× A1→A2 · B1→B2 · C1→C2';
 
   document.querySelectorAll('.swap').forEach(b => {
@@ -566,7 +613,7 @@ function load(){
       s.kit = s.kit === 'bw' ? ['bw'] : ['trx','kb'];
     }
     if (Array.isArray(s.kit)) {
-      const k = KIT_ORDER.filter(x => s.kit.indexOf(x) !== -1);
+      const k = normKit(s.kit);
       if (k.length) state.kit = k;
     }
     if ([2,3,4].indexOf(s.rounds) !== -1) state.rounds = s.rounds;
@@ -577,7 +624,9 @@ document.querySelectorAll('[data-kit]').forEach(b => b.addEventListener('click',
   const k = b.dataset.kit;
   const on = state.kit.indexOf(k) !== -1;
   if (on && state.kit.length === 1) return; // at least one piece of kit stays ticked
-  state.kit = KIT_ORDER.filter(x => x === k ? !on : state.kit.indexOf(x) !== -1);
+  if (k === 'gym') state.kit = ['gym'];                    // gym takes the whole session
+  else if (state.kit[0] === 'gym') state.kit = [k];        // any home tick leaves the gym
+  else state.kit = KIT_ORDER.filter(x => x === k ? !on : state.kit.indexOf(x) !== -1);
   state.warm = {}; state.work = {};
   rollAll(); syncControls(); render(); save();
 }));
